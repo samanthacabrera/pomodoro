@@ -58,6 +58,9 @@ export default function App() {
             Reset
           </button>
         </div>
+        <p className="text-justify mt-12">
+          The Pomodoro Technique is a time management method created by Francesco Cirillo back in the 1980s. The idea is to help you stay focused by splitting your work into short, manageable chunks. A session is 25 minutes of focused work followed by a 5-minute break. Each of these sessions is called a Pomodoro (Italian for “tomato”), inspired by the tomato-shaped kitchen timer Cirillo used when he first came up with the system. After you’ve done four Pomodoros, you take a longer break of about 15–30 minutes to rest and reset.
+        </p>
       </div>
     </div>
   );
