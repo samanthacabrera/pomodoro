@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function App() {
+
   const POMODORO = 25 * 60;
+  const SHORT_BREAK = 5 * 60;
+  const LONG_BREAK = 15 * 60;
+
+  const [mode, setMode] = useState("pomodoro");
   const [secondsLeft, setSecondsLeft] = useState(POMODORO);
   const [running, setRunning] = useState(false);
   const [showDesc, setShowDesc] = useState(true);
@@ -31,10 +36,22 @@ export default function App() {
   const seconds = String(secondsLeft % 60).padStart(2, "0");
 
   const toggle = () => setRunning((r) => !r);
+
   const reset = () => {
     setRunning(false);
-    setSecondsLeft(POMODORO);
+    if (mode === "pomodoro") setSecondsLeft(POMODORO);
+    else if (mode === "short") setSecondsLeft(SHORT_BREAK);
+    else setSecondsLeft(LONG_BREAK);
   };
+
+  const changeMode = (newMode) => {
+    setRunning(false);
+    setMode(newMode);
+    if (newMode === "pomodoro") setSecondsLeft(POMODORO);
+    else if (newMode === "short") setSecondsLeft(SHORT_BREAK);
+    else setSecondsLeft(LONG_BREAK);
+  };
+
 
   return (
     <div className="min-h-screen bg-orange-950 text-orange-100 flex items-center justify-center">
@@ -50,14 +67,43 @@ export default function App() {
 
         <div className="flex gap-4">
           <button
+            onClick={() => changeMode("pomodoro")}
+            className={`px-4 py-2 rounded-md ${
+              mode === "pomodoro" ? "bg-orange-400 text-orange-950" : "bg-orange-800 text-orange-200"
+            }`}
+          >
+            Pomodoro
+          </button>
+          <button
+            onClick={() => changeMode("short")}
+            className={`px-4 py-2 rounded-md ${
+              mode === "short" ? "bg-orange-400 text-orange-950" : "bg-orange-800 text-orange-200"
+            }`}
+          >
+            Short Break
+          </button>
+          <button
+            onClick={() => changeMode("long")}
+            className={`px-4 py-2 rounded-md ${
+              mode === "long" ? "bg-orange-400 text-orange-950" : "bg-orange-800 text-orange-200"
+            }`}
+          >
+            Long Break
+          </button>
+        </div>
+
+        <div className="flex gap-4">
+          <button
             onClick={toggle}
-            className="px-6 py-3 rounded-md bg-orange-400 text-orange-950 font-semibold shadow hover:scale-105 transition-transform">
+            className="px-6 py-3 rounded-md bg-transparent border border-orange-600 text-sm text-orange-300 hover:bg-orange-900 transition"
+          >
             {running ? "Pause" : "Start"}
           </button>
 
           <button
             onClick={reset}
-            className="px-6 py-3 rounded-md bg-transparent border border-orange-600 text-sm text-orange-300 hover:bg-orange-900 transition">
+            className="px-6 py-3 rounded-md bg-transparent border border-orange-600 text-sm text-orange-300 hover:bg-orange-900 transition"
+          >
             Reset
           </button>
         </div>
