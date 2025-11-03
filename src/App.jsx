@@ -70,24 +70,24 @@ export default function App() {
             <div className="flex gap-4">
               <button
                 onClick={() => changeMode("pomodoro")}
-                className={`px-4 py-2 rounded-md ${
-                  mode === "pomodoro" ? "bg-orange-400 text-orange-950" : "bg-orange-800 text-orange-200"
+                className={`px-4 py-2 rounded ${
+                  mode === "pomodoro" ? "bg-red-700 text-white" : "border-2 border-red-700"
                 }`}
               >
                 Pomodoro
               </button>
               <button
                 onClick={() => changeMode("short")}
-                className={`px-4 py-2 rounded-md ${
-                  mode === "short" ? "bg-orange-400 text-orange-950" : "bg-orange-800 text-orange-200"
+                className={`px-4 py-2 rounded ${
+                  mode === "short" ? "bg-red-700 text-white" : "border-2 border-red-700"
                 }`}
               >
                 Short Break
               </button>
               <button
                 onClick={() => changeMode("long")}
-                className={`px-4 py-2 rounded-md ${
-                  mode === "long" ? "bg-orange-400 text-orange-950" : "bg-orange-800 text-orange-200"
+                className={`px-4 py-2 rounded ${
+                  mode === "long" ? "bg-red-700 text-white" : "border-2 border-red-700"
                 }`}
               >
                 Long Break
@@ -116,7 +116,7 @@ export default function App() {
           />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="mt-12 text-center">
-              <div className="text-4xl md:text-6xl font-medium text-orange-200">
+              <div className="text-4xl md:text-6xl font-medium text-white">
                 {minutes}:{seconds}
               </div>
             </div>
@@ -127,14 +127,14 @@ export default function App() {
         <div className="flex gap-4">
           <button
             onClick={toggle}
-            className="px-6 py-3 rounded-md bg-transparent border border-orange-600 text-sm text-orange-300 hover:bg-orange-900 transition"
+            className="px-4 py-2 rounded bg-red-700 text-white border-4 border-red-700"
           >
             {running ? "Pause" : "Start"}
           </button>
 
           <button
             onClick={reset}
-            className="px-6 py-3 rounded-md bg-transparent border border-orange-600 text-sm text-orange-300 hover:bg-orange-900 transition"
+            className="px-4 py-2 rounded bg-red-700 text-white border-4 border-red-700"
           >
             Reset
           </button>
@@ -143,7 +143,7 @@ export default function App() {
         <div className="px-4 text-center transition-all duration-500">
         <button
           onClick={() => setShowDesc((s) => !s)}
-          className="text-sm text-orange-400 hover:text-orange-200 transition"
+          className="text-sm"
         >
           {showDesc ? "Hide info ▲" : "Show info ▼"}
         </button>
