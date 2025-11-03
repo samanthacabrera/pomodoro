@@ -52,12 +52,20 @@ export default function App() {
     else setSecondsLeft(LONG_BREAK);
   };
 
+  const totalTime =
+    mode === "pomodoro" ? POMODORO :
+    mode === "short" ? SHORT_BREAK : LONG_BREAK;
+
+  const progress = secondsLeft / totalTime;
+  // start green (120°) to end red (0°)
+  const hue = 120 * progress; 
 
   return (
-    <div className="min-h-screen bg-orange-950 text-orange-100 flex items-center justify-center">
+    <div className="min-h-screen bg-green-50 text-red-700 flex items-center justify-center">
       <div className="flex flex-col items-center gap-8 p-6">
         <div className="flex justify-between w-screen px-4">
-          <h1 className="text-4xl uppercase tracking-widest font-bold text-orange-300">Pomodoro</h1>
+          <h1 className="text-4xl uppercase tracking-widest font-bold">Pomodoro</h1>
+            
             {/* Modes  */}
             <div className="flex gap-4">
               <button
@@ -86,8 +94,26 @@ export default function App() {
               </button>
             </div>
         </div>
+
+        {/* Timer */}
         <div className="relative w-96 h-96 md:w-[45vw] md:h-[55vh] flex items-center justify-center">
-          <img src="/tomato.png" alt="Tomato timer" className="w-full h-full object-cover"/>
+          <img
+            src="/tomato.png"
+            alt="tomato"
+            className="absolute inset-0 w-full h-full object-contain"
+            draggable="false"
+          />
+          <img
+            src="/tomato-body.png"
+            alt="tomato body"
+            className="absolute inset-0 w-full h-full object-contain transition-all duration-1000"
+            style={{
+              transform: "scale(1.16)", 
+              transformOrigin: "center center",
+              filter: `hue-rotate(${hue}deg) saturate(150%) brightness(1.1)`,
+            }}
+            draggable="false"
+          />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="mt-12 text-center">
               <div className="text-4xl md:text-6xl font-medium text-orange-200">
