@@ -9,7 +9,7 @@ export default function App() {
   const [mode, setMode] = useState("pomodoro");
   const [secondsLeft, setSecondsLeft] = useState(POMODORO);
   const [running, setRunning] = useState(false);
-  const [showDesc, setShowDesc] = useState(true);
+  const [showDesc, setShowDesc] = useState(false);
   const intervalRef = useRef(null);
 
   useEffect(() => {
@@ -57,38 +57,37 @@ export default function App() {
     mode === "short" ? SHORT_BREAK : LONG_BREAK;
 
   const progress = secondsLeft / totalTime;
-  // start green (120°) to end red (0°)
-  const hue = 120 * progress; 
+  const hue = 120 * progress; // start green (120°) to end red (0°)
+
+  const buttonBase = `px-6 py-3 rounded font-bold text-sm md:text-base border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] transition-all duration-300 transform hover:scale-105 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
+  const buttonActive = `bg-red-700 text-white hover:bg-red-600`;
+  const buttonInactive = `bg-green-50 text-red-700 hover:text-red-600`;
 
   return (
-    <div className="min-h-screen bg-green-50 text-red-700 flex items-center justify-center">
+    <div className="min-h-screen bg-yellow-50 text-red-700 flex items-center justify-center">
       <div className="flex flex-col items-center gap-8 p-6">
-        <div className="flex justify-between w-screen px-4">
-          <h1 className="text-4xl uppercase tracking-widest font-bold">Pomodoro</h1>
-            
+        <div className="flex flex-col md:flex-row justify-between w-screen px-4">
+          <div className="flex-col">
+            <h1 className="text-4xl uppercase tracking-widest font-bold">Pomodoro</h1>
+            <h6 className="text-xs hover:text-red-600 transition">Made by <a href="https://github.com/samanthacabrera">Sam Cabrera</a></h6>
+          </div>
             {/* Modes  */}
-            <div className="flex gap-4">
+            <div className="flex gap-4 mt-4 md:mt-0">
               <button
                 onClick={() => changeMode("pomodoro")}
-                className={`px-4 py-2 rounded ${
-                  mode === "pomodoro" ? "bg-red-700 text-white" : "border-2 border-red-700"
-                }`}
+                className={`${buttonBase} ${mode === "pomodoro" ? buttonActive : buttonInactive}`}
               >
                 Pomodoro
               </button>
               <button
                 onClick={() => changeMode("short")}
-                className={`px-4 py-2 rounded ${
-                  mode === "short" ? "bg-red-700 text-white" : "border-2 border-red-700"
-                }`}
+                className={`${buttonBase} ${mode === "short" ? buttonActive : buttonInactive}`}
               >
                 Short Break
               </button>
               <button
                 onClick={() => changeMode("long")}
-                className={`px-4 py-2 rounded ${
-                  mode === "long" ? "bg-red-700 text-white" : "border-2 border-red-700"
-                }`}
+                className={`${buttonBase} ${mode === "long" ? buttonActive : buttonInactive}`}
               >
                 Long Break
               </button>
@@ -98,19 +97,19 @@ export default function App() {
         {/* Timer */}
         <div className="relative w-96 h-96 md:w-[45vw] md:h-[55vh] flex items-center justify-center">
           <img
-            src="/tomato.png"
+            src="/pomodoro/tomato.png"
             alt="tomato"
             className="absolute inset-0 w-full h-full object-contain"
             draggable="false"
           />
           <img
-            src="/tomato-body.png"
+            src="/pomodoro/tomato-body.png"
             alt="tomato body"
-            className="absolute inset-0 w-full h-full object-contain transition-all duration-1000"
+            className="hidden xl:block absolute inset-0 w-full h-full object-contain transition-all duration-1000"
             style={{
               transform: "scale(1.16)", 
               transformOrigin: "center center",
-              filter: `hue-rotate(${hue}deg) saturate(150%) brightness(1.1)`,
+              filter: `hue-rotate(${120 * progress}deg) saturate(105%)`,
             }}
             draggable="false"
           />
@@ -123,18 +122,29 @@ export default function App() {
           </div>
         </div>
 
+        {running && (
+          <div className="-mt-12 text-center text-sm md:text-base font-semibold">
+            {progress > 0.75
+              ? "Just getting started...."
+              : progress > 0.5
+                ? "Getting juicier...."
+                : progress > 0.25
+                  ? "Almost ripe...."
+                  : "Fully ripe!! You did it!!! 🍅 "}
+          </div>
+        )}
+
         {/* Controls */}
         <div className="flex gap-4">
           <button
             onClick={toggle}
-            className="px-4 py-2 rounded bg-red-700 text-white border-4 border-red-700"
-          >
+            className={`${buttonBase} ${running ? buttonActive : buttonInactive} `}>
             {running ? "Pause" : "Start"}
           </button>
 
           <button
             onClick={reset}
-            className="px-4 py-2 rounded bg-red-700 text-white border-4 border-red-700"
+            className={`${buttonBase} ${buttonActive} `}
           >
             Reset
           </button>
@@ -145,21 +155,15 @@ export default function App() {
           onClick={() => setShowDesc((s) => !s)}
           className="text-sm"
         >
-          {showDesc ? "Hide info ▲" : "Show info ▼"}
+        {showDesc ? "Hide info ▲" : "Show info ▼"}
         </button>
           <p
             className={`text-justify ${
               showDesc ? "opacity-100 visible" : "opacity-0 invisible"
             } transition-opacity duration-500`}
           >
-            The Pomodoro Technique is a time management method created by Francesco
-            Cirillo back in the 1980s. The idea is to help you stay focused by
-            splitting your work into short, manageable chunks. A session is 25 minutes
-            of focused work followed by a 5-minute break. Each of these sessions is
-            called a Pomodoro (Italian for “tomato”), inspired by the tomato-shaped
-            kitchen timer Cirillo used when he first came up with the system. After
-            you’ve done four Pomodoros, you take a longer break of about 15–30 minutes
-            to rest and reset.
+            The Pomodoro Technique is a time management method created by Francesco Cirillo back in the 1980s. The idea is to help you stay focused by splitting your work into short, manageable chunks. A session is 25 minutes of focused work followed by a 5-minute break. Each of these sessions is
+            called a Pomodoro (Italian for “tomato”), inspired by the tomato-shaped kitchen timer Cirillo used when he first came up with the system. After you’ve done four Pomodoros, you take a longer break of about 15 minutes to rest and reset.
           </p>
         </div>
       </div>
