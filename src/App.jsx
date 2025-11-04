@@ -9,6 +9,7 @@ export default function App() {
   const [mode, setMode] = useState("pomodoro");
   const [secondsLeft, setSecondsLeft] = useState(POMODORO);
   const [running, setRunning] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false)
   const [showDesc, setShowDesc] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
@@ -52,10 +53,14 @@ export default function App() {
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const seconds = String(secondsLeft % 60).padStart(2, "0");
 
-  const toggle = () => setRunning((r) => !r);
+  const toggle = () => {
+    if (!running) setHasStarted(true); 
+    setRunning(r => !r);
+  };
 
   const reset = () => {
     setRunning(false);
+    setHasStarted(false);
     if (mode === "pomodoro") setSecondsLeft(POMODORO);
     else if (mode === "short") setSecondsLeft(SHORT_BREAK);
     else setSecondsLeft(LONG_BREAK);
@@ -75,7 +80,7 @@ export default function App() {
 
   const progress = secondsLeft / totalTime;
 
-  const buttonBase = `px-6 py-3 rounded-2xl font-bold text-sm md:text-base border-2 border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
+  const buttonBase = `px-3 py-2 md:px-6 md:py-3 rounded-2xl font-bold text-sm md:text-base border-2 border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
   const buttonActive = `bg-red-700 text-white hover:bg-red-600`;
   const buttonInactive = `bg-stone-50 text-red-700 hover:text-red-600`;
 
@@ -113,7 +118,7 @@ export default function App() {
                 onClick={() => setDrawerOpen(true)}
                 className={`${buttonBase} ${buttonInactive}`}
               >
-                + To-Do 
+                To-Do 
               </button>
             </div>
         </div>
@@ -183,10 +188,16 @@ export default function App() {
       </div>
     </div>
     
+    {hasStarted && !running && (
+      <div
+        className="fixed inset-0 bg-black/20 pointer-events-none transition-opacity duration-300"
+      ></div>
+    )}
+    
     {/* To-Do List  */}
       <div
         ref={drawerRef}
-        className={`fixed top-1/2 -translate-y-1/2 right-0 h-auto max-h-full w-80 transform transition-transform duration-300 border border-yellow-100 rounded shadow-lg ${
+        className={`fixed top-1/2 -translate-y-1/2 right-0 h-auto max-h-full w-80 transform transition-transform duration-300 rounded shadow-lg ${
           drawerOpen ? "translate-x-0 rotate-1" : "translate-x-full"
         } flex flex-col p-4 z-50`}
         style={{
