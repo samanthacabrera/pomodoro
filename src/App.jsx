@@ -57,7 +57,6 @@ export default function App() {
     mode === "short" ? SHORT_BREAK : LONG_BREAK;
 
   const progress = secondsLeft / totalTime;
-  const hue = 120 * progress; // start green (120°) to end red (0°)
 
   const buttonBase = `px-6 py-3 rounded font-bold text-sm md:text-base border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] transition-all duration-300 transform hover:scale-105 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
   const buttonActive = `bg-red-700 text-white hover:bg-red-600`;
@@ -102,17 +101,6 @@ export default function App() {
             className="absolute inset-0 w-full h-full object-contain"
             draggable="false"
           />
-          <img
-            src="/pomodoro/tomato-body.png"
-            alt="tomato body"
-            className="hidden xl:block absolute inset-0 w-full h-full object-contain transition-all duration-1000"
-            style={{
-              transform: "scale(1.16)", 
-              transformOrigin: "center center",
-              filter: `hue-rotate(${120 * progress}deg) saturate(105%)`,
-            }}
-            draggable="false"
-          />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="mt-12 text-center">
               <div className="text-4xl md:text-6xl font-medium text-white">
@@ -123,14 +111,15 @@ export default function App() {
         </div>
 
         {running && (
-          <div className="-mt-12 text-center text-sm md:text-base font-semibold">
-            {progress > 0.75
-              ? "Just getting started...."
-              : progress > 0.5
-                ? "Getting juicier...."
-                : progress > 0.25
-                  ? "Almost ripe...."
-                  : "Fully ripe!! You did it!!! 🍅 "}
+          <div
+            className="fixed bottom-0 left-0 h-3 md:h-4 bg-red-700 transition-all duration-300"
+            style={{
+              width: `${(1 - progress) * 100}%`,
+              transition: "width 1s linear, background-color 0.1s linear",
+              filter: `hue-rotate(${120 * progress}deg) saturate(105%)`,
+            }}
+          >
+
           </div>
         )}
 
