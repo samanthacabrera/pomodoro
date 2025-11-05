@@ -105,7 +105,32 @@ export default function App() {
 
   const progress = secondsLeft / totalTime;
 
-  const buttonBase = `px-3 py-2 md:px-6 md:py-3 rounded-2xl font-bold text-sm md:text-base border-2 border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
+  const getTomatoColor = (progress) => {
+  const stages = [
+    { progress: 1, color: { r: 21, g: 128, b: 61 } },   // green-700
+    { progress: 0.5, color: { r: 234, g: 88, b: 12 } }, // orange-600 
+    { progress: 0, color: { r: 185, g: 28, b: 28 } },   // red-700 
+  ];
+
+  const interpolateColor = (c1, c2, factor) => {
+    const r = Math.round(c1.r + (c2.r - c1.r) * factor);
+    const g = Math.round(c1.g + (c2.g - c1.g) * factor);
+    const b = Math.round(c1.b + (c2.b - c1.b) * factor);
+    return `rgb(${r},${g},${b})`;
+  };
+
+  for (let i = 0; i < stages.length - 1; i++) {
+    if (progress >= stages[i + 1].progress) {
+      const factor =
+        (progress - stages[i + 1].progress) / (stages[i].progress - stages[i + 1].progress);
+      return interpolateColor(stages[i + 1].color, stages[i].color, factor);
+    }
+  }
+
+  return `rgb(185,28,28)`; 
+};
+  
+  const buttonBase = `px-3 py-2 md:px-6 md:py-3 rounded-2xl font-bold text-xs md:text-base border-2 border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
   const buttonActive = `bg-red-700 text-white hover:bg-red-600`;
   const buttonInactive = `bg-stone-50 text-red-700 hover:text-red-600`;
 
@@ -194,7 +219,7 @@ export default function App() {
               )}
               <button
                 onClick={() => setDrawerOpen(true)}
-                className={`absolute top-4 right-2 md:relative rounded-full w-12 h-12 font-bold text-sm md:text-base border-2 border-black bg-stone-50 text-red-700 hover:text-white hover:bg-red-600 transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`}
+                className={`rounded-full w-8 h-8 md:w-12 md:h-12 font-bold text-sm md:text-base border-2 border-black bg-stone-50 text-red-700 hover:text-white hover:bg-red-600 transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`}
               >
                 +
               </button>
@@ -220,15 +245,14 @@ export default function App() {
 
         {/* Progress Bar */}
         <div
-          className="fixed bottom-0 left-0 h-3 md:h-4 bg-red-700 transition-all duration-300"
+          className="fixed bottom-0 left-0 h-3 md:h-4 transition-all duration-300"
           style={{
             width: `${(1 - progress) * 100}%`,
-            transition: "width 1s linear, background-color 0.1s linear",
-            filter: `hue-rotate(${120 * progress}deg) saturate(105%)`,
+            backgroundColor: getTomatoColor(progress),
             height: running ? "20px" : "16px",
+            transition: "width 1s linear, background-color 0.1s linear",
           }}
-        >
-        </div>
+        ></div>
 
         {/* Controls */}
         <div className="flex gap-4">
@@ -324,7 +348,7 @@ export default function App() {
           </li>
         ))}
       </ul>
-    </div>
+    </div> 
     </>
   );
 }
