@@ -7,6 +7,8 @@ export default function App() {
   const LONG_BREAK = 15 * 60;
 
   const [mode, setMode] = useState("pomodoro");
+  const [custom, setCustom] = useState(25);
+  const [showCustomModal, setShowCustomModal] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(POMODORO);
   const [running, setRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false)
@@ -23,12 +25,10 @@ export default function App() {
         setSecondsLeft((s) => (s > 0 ? s - 1 : 0));
       }, 1000);
     }
-
     if (!running && intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -61,9 +61,11 @@ export default function App() {
   const reset = () => {
     setRunning(false);
     setHasStarted(false);
+
     if (mode === "pomodoro") setSecondsLeft(POMODORO);
     else if (mode === "short") setSecondsLeft(SHORT_BREAK);
-    else setSecondsLeft(LONG_BREAK);
+    else if (mode === "long") setSecondsLeft(LONG_BREAK);
+    else if (mode === "custom") setSecondsLeft(custom * 60);
   };
 
   const changeMode = (newMode) => {
@@ -71,12 +73,35 @@ export default function App() {
     setMode(newMode);
     if (newMode === "pomodoro") setSecondsLeft(POMODORO);
     else if (newMode === "short") setSecondsLeft(SHORT_BREAK);
-    else setSecondsLeft(LONG_BREAK);
+    else if (newMode === "long") setSecondsLeft(LONG_BREAK);
+    else if (newMode === "custom") setSecondsLeft(custom * 60);
+  };
+
+  useEffect(() => {
+    if (mode === "custom") {
+      setSecondsLeft(custom * 60);
+    }
+  }, [custom]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && showCustomModal) {
+      e.preventDefault();
+      if (custom === "" || isNaN(custom)) {
+        setCustom(1);
+      }
+      setSecondsLeft((custom || 1) * 60);
+      setShowCustomModal(false);
+    }
   };
 
   const totalTime =
-    mode === "pomodoro" ? POMODORO :
-    mode === "short" ? SHORT_BREAK : LONG_BREAK;
+    mode === "pomodoro"
+    ? POMODORO
+    : mode === "short"
+    ? SHORT_BREAK
+    : mode === "long"
+    ? LONG_BREAK
+    : custom * 60;
 
   const progress = secondsLeft / totalTime;
 
@@ -115,10 +140,63 @@ export default function App() {
                 Long Break
               </button>
               <button
-                onClick={() => setDrawerOpen(true)}
-                className={`${buttonBase} ${buttonInactive}`}
+                onClick={() => {
+                  changeMode("custom");
+                  setShowCustomModal(true);}}
+                className={`${buttonBase} ${mode === "custom" ? buttonActive : buttonInactive}`}
               >
-                To-Do 
+                Custom
+              </button>
+               {showCustomModal && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                  <div className="bg-white rounded px-12 py-6 shadow-xl text-red-700 flex flex-col space-y-6 md:space-y-8 items-center">
+                    <h3 className="text-lg font-semibold">Set Custom Time</h3>
+                    <div className="flex-row space-x-4">
+                      <input
+                        type="number"
+                        min="1"
+                        max="180"
+                        value={custom}
+                        className="border border-red-700 rounded px-3 py-2 w-24 text-center focus:outline-none"
+                        onKeyDown={handleKeyDown}
+                        onBlur={() => {if (custom === "" || isNaN(custom)) { setCustom(1); }}}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            if (val === "") {
+                              setCustom("");
+                            } else {
+                              const num = Math.max(1, Math.min(180, Number(val)));
+                              setCustom(num);
+                            }
+                        }}
+                      />
+                      <span>minutes</span>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => {
+                          setSecondsLeft(custom * 60);
+                          setShowCustomModal(false);
+                        }}
+                        className={`${buttonBase} ${buttonActive}`}
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setShowCustomModal(false)}
+                        className={`${buttonBase} ${buttonInactive}`}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <button
+                onClick={() => setDrawerOpen(true)}
+                className={`absolute top-4 right-2 md:relative rounded-full w-12 h-12 font-bold text-sm md:text-base border-2 border-black bg-stone-50 text-red-700 hover:text-white hover:bg-red-600 transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`}
+              >
+                +
               </button>
             </div>
         </div>
@@ -156,13 +234,12 @@ export default function App() {
         <div className="flex gap-4">
           <button
             onClick={toggle}
-            className={`${buttonBase} ${running ? buttonActive : buttonInactive} `}>
+            className={`${buttonBase} ${buttonInactive} `}>
             {running ? "Pause" : "Start"}
           </button>
-
           <button
             onClick={reset}
-            className={`${buttonBase} ${buttonActive} `}
+            className={`${buttonBase} ${buttonInactive} `}
           >
             Reset
           </button>
