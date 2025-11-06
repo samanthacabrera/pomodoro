@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import corkboard from '/corkboard.avif';
 
 export default function App() {
 
@@ -229,15 +230,21 @@ export default function App() {
             {menuOpen && (
                 <div
                   ref={menuRef}
-                  className="absolute top-10 right-0 flex flex-col gap-2 bg-white border-2 border-black rounded-md shadow-lg p-4 z-50 w-80">
+                  className="absolute top-24 -right-4 flex flex-col shadow-lg border-2 border-[#8B4513] text-white p-8 z-50 w-100"
+                  style={{
+                      backgroundImage: `url(${corkboard})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  >
                   <button
                     onClick={() => setMenuOpen(false)}
-                    className="self-end text-xl font-bold hover:text-red-600"
+                    className="absolute top-4 right-4 text-xl"
                   >
                     ×
                   </button>
                 {/* To-Do List */}
-                <h2 className="text-red-700 text-xl uppercase tracking-widest font-bold mb-2">
+                <h2 className="text-xl uppercase tracking-widest font-bold mb-2">
                   To-Do List
                 </h2>
                 <div className="flex gap-2 mb-2">
@@ -246,7 +253,7 @@ export default function App() {
                     value={newTask}
                     onChange={(e) => setNewTask(e.target.value)}
                     placeholder="New task..."
-                    className="flex-1 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-700 rounded-sm"
+                    className="flex-1 px-3 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-stone-50 rounded-sm"
                   />
                   <button
                     onClick={() => {
