@@ -13,7 +13,6 @@ export default function App() {
   const [secondsLeft, setSecondsLeft] = useState(POMODORO);
   const [running, setRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false)
-  const [showDesc, setShowDesc] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
@@ -136,7 +135,7 @@ export default function App() {
 
   return (
     <>
-    <div className="min-h-screen bg-yellow-50 text-red-700 flex items-center justify-center overflow-x-hidden">
+    <div className="min-h-screen bg-yellow-50 text-red-700">
       <div className="flex flex-col items-center gap-8 p-6">
         <div className="flex flex-col md:flex-row justify-between w-screen px-4">
           <div className="flex-col">
@@ -230,7 +229,7 @@ export default function App() {
             {menuOpen && (
                 <div
                   ref={menuRef}
-                  className="absolute top-24 -right-4 flex flex-col shadow-lg border-2 border-[#8B4513] text-white p-8 z-50 w-100"
+                  className="absolute top-24 -right-4 flex flex-col space-y-12 shadow-lg border-2 border-[#8B4513] text-white p-8 z-50 w-100 h-[75vh] transform transition-all duration-300"
                   style={{
                       backgroundImage: `url(${corkboard})`,
                       backgroundSize: "cover",
@@ -239,50 +238,67 @@ export default function App() {
                   >
                   <button
                     onClick={() => setMenuOpen(false)}
-                    className="absolute top-4 right-4 text-xl"
+                    className="absolute top-2 right-4 text-2xl"
                   >
                     ×
                   </button>
                 {/* To-Do List */}
-                <h2 className="text-xl uppercase tracking-widest font-bold mb-2">
-                  To-Do List
-                </h2>
-                <div className="flex gap-2 mb-2">
-                  <input
-                    type="text"
-                    value={newTask}
-                    onChange={(e) => setNewTask(e.target.value)}
-                    placeholder="New task..."
-                    className="flex-1 px-3 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-stone-50 rounded-sm"
-                  />
-                  <button
-                    onClick={() => {
-                      if (newTask.trim() === "") return;
-                      setTasks([...tasks, newTask.trim()]);
-                      setNewTask("");
-                    }}
-                    className="h-8 w-8 rounded-full bg-red-700 text-white"
-                  >
-                    +
-                  </button>
-                </div>
-                <ul className="flex-1 max-h-64 overflow-y-auto space-y-2">
-                  {tasks.map((t, i) => (
-                    <li
-                      key={i}
-                      className="flex justify-between px-2 py-1 border-b border-dashed border-black/20"
+                <div
+                  className="relative w-64 h-64 p-4 bg-yellow-200 shadow-lg transform rotate-2"
+                >
+                  <h2 className="text-lg text-yellow-500 uppercase tracking-widest font-bold mb-2">To-Do List</h2>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={newTask}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          if (!newTask.trim()) return;
+                          setTasks([...tasks, newTask.trim()]);
+                          setNewTask("");
+                        }
+                      }}
+                      onChange={(e) => setNewTask(e.target.value)}
+                      placeholder="New task..."
+                      className="flex-1 p-1 rounded-sm focus:outline-none text-stone-500 placeholder-stone-500 bg-transparent border-b border-dashed border-stone-500"
+                    />
+                    <button
+                      onClick={() => {
+                        if (!newTask.trim()) return;
+                        setTasks([...tasks, newTask.trim()]);
+                        setNewTask("");
+                      }}
+                      className="text-yellow-500 text-xl font-bold hover:scale-120 transition"
                     >
-                      <span>{t}</span>
-                      <button
-                        onClick={() => setTasks(tasks.filter((_, index) => index !== i))}
-                        className="hover:scale-110 transition ml-2"
-                      >
-                        ×
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                      +
+                    </button>
+                  </div>
+                  <ul className="text-stone-500 space-y-1 max-h-48 overflow-y-auto">
+                    {tasks.map((task, index) => (
+                      <div className="flex justify-between w-full">
+                        <li
+                          key={index}
+                          className="flex p-1 w-full justify-between border-b border-dashed border-black/30 py-1"
+                        >
+                          <span>{task}</span>
+                        </li>
+                        <button
+                          className="pl-2 hover:scale-120 transition"
+                          onClick={() => setTasks(tasks.filter((_, i) => i !== index))}>
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </ul>
+                </div>
                 
+                {/* Info */}
+                <div
+                className="relative w-64 h-64 p-4 bg-yellow-200 shadow-lg transform -rotate-1 text-sm text-yellow-500 tracking-wide"
+                >
+                  <p>The Pomodoro Technique, created by Francesco Cirillo helps you stay focused by breaking work into short sessions. Each Pomodoro is 25 minutes of work followed by a 5-minute break. After four Pomodoros, take a longer 15-minute break to rest and reset.</p>
+                </div>
               </div>
             )}
           </div>
@@ -329,24 +345,6 @@ export default function App() {
           >
             Reset
           </button>
-        </div>
-
-        {/* Info */}
-        <div className="px-4 text-center transition-all duration-500">
-        <button
-          onClick={() => setShowDesc((s) => !s)}
-          className="text-sm"
-        >
-        {showDesc ? "Hide info ▲" : "Show info ▼"}
-        </button>
-          <p
-            className={`text-justify ${
-              showDesc ? "opacity-100 visible" : "opacity-0 invisible"
-            } transition-opacity duration-500`}
-          >
-            The Pomodoro Technique is a time management method created by Francesco Cirillo back in the 1980s. The idea is to help you stay focused by splitting your work into short, manageable chunks. A session is 25 minutes of focused work followed by a 5-minute break. Each of these sessions is
-            called a Pomodoro (Italian for “tomato”), inspired by the tomato-shaped kitchen timer Cirillo used when he first came up with the system. After you’ve done four Pomodoros, you take a longer break of about 15 minutes to rest and reset.
-          </p>
         </div>
       </div>
     </div>
