@@ -13,11 +13,11 @@ export default function App() {
   const [running, setRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false)
   const [showDesc, setShowDesc] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
+  const menuRef = useRef(null);
   const intervalRef = useRef(null);
-  const drawerRef = useRef(null);
 
   useEffect(() => {
     if (running && intervalRef.current === null) {
@@ -38,17 +38,16 @@ export default function App() {
   }, [running]);
 
   useEffect(() => {
-  function handleClickOutside(event) {
-    if (drawerRef.current && !drawerRef.current.contains(event.target)) {
-      setDrawerOpen(false);
-    }
-  }
-
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const seconds = String(secondsLeft % 60).padStart(2, "0");
@@ -145,7 +144,7 @@ export default function App() {
           </div>
           
             {/* Modes  */}
-            <div className="flex gap-4 mt-4 md:mt-0">
+            <div className="flex gap-4 mt-4 md:mt-0 md:mr-12">
               <button
                 onClick={() => changeMode("pomodoro")}
                 className={`${buttonBase} ${mode === "pomodoro" ? buttonActive : buttonInactive}`}
@@ -217,13 +216,69 @@ export default function App() {
                   </div>
                 </div>
               )}
-              <button
-                onClick={() => setDrawerOpen(true)}
-                className={`rounded-full w-8 h-8 md:w-12 md:h-12 font-bold text-sm md:text-base border-2 border-black bg-stone-50 text-red-700 hover:text-white hover:bg-red-600 transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`}
-              >
-                +
-              </button>
             </div>
+              
+          {/* Menu */}
+          <div className="absolute top-6 right-4">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-2xl md:text-4xl hover:scale-110 transition duration-300"
+            >
+              ☰
+            </button>
+            {menuOpen && (
+                <div
+                  ref={menuRef}
+                  className="absolute top-10 right-0 flex flex-col gap-2 bg-white border-2 border-black rounded-md shadow-lg p-4 z-50 w-80">
+                  <button
+                    onClick={() => setMenuOpen(false)}
+                    className="self-end text-xl font-bold hover:text-red-600"
+                  >
+                    ×
+                  </button>
+                {/* To-Do List */}
+                <h2 className="text-red-700 text-xl uppercase tracking-widest font-bold mb-2">
+                  To-Do List
+                </h2>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={newTask}
+                    onChange={(e) => setNewTask(e.target.value)}
+                    placeholder="New task..."
+                    className="flex-1 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-700 rounded-sm"
+                  />
+                  <button
+                    onClick={() => {
+                      if (newTask.trim() === "") return;
+                      setTasks([...tasks, newTask.trim()]);
+                      setNewTask("");
+                    }}
+                    className="h-8 w-8 rounded-full bg-red-700 text-white"
+                  >
+                    +
+                  </button>
+                </div>
+                <ul className="flex-1 max-h-64 overflow-y-auto space-y-2">
+                  {tasks.map((t, i) => (
+                    <li
+                      key={i}
+                      className="flex justify-between px-2 py-1 border-b border-dashed border-black/20"
+                    >
+                      <span>{t}</span>
+                      <button
+                        onClick={() => setTasks(tasks.filter((_, index) => index !== i))}
+                        className="hover:scale-110 transition ml-2"
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Timer */}
@@ -294,61 +349,6 @@ export default function App() {
         className="fixed inset-0 bg-black/20 pointer-events-none transition-opacity duration-300"
       ></div>
     )}
-    
-    {/* To-Do List  */}
-      <div
-        ref={drawerRef}
-        className={`fixed top-1/2 -translate-y-1/2 right-0 h-auto max-h-full w-80 transform transition-transform duration-300 rounded shadow-lg ${
-          drawerOpen ? "translate-x-0 rotate-1" : "translate-x-full"
-        } flex flex-col p-4 z-50`}
-        style={{
-          backgroundColor: "#FFF9C4", 
-        }}
-      >
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-red-700 text-xl uppercase tracking-widest font-bold">
-          To-Do List
-        </h2>
-      </div>
-      <div className="flex gap-2 mb-4">
-        <input
-          type="text"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          placeholder="New task..."
-          className="flex-1 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-red-700 rounded-sm"
-        />
-        <button
-          onClick={() => {
-            if (newTask.trim() === "") return;
-            setTasks([...tasks, newTask.trim()]);
-            setNewTask("");
-          }}
-          className="h-8 w-8 rounded-full bg-red-700 text-white"
-        >
-          +
-        </button>
-      </div>
-      <ul className="flex-1 overflow-y-auto space-y-2">
-        {tasks.map((t, i) => (
-          <li
-            key={i}
-            className="flex justify-between px-2 py-1"
-            style={{
-              borderBottom: "1px dashed rgba(0,0,0,0.2)",
-            }}
-          >
-            <span>{t}</span>
-            <button
-              onClick={() => setTasks(tasks.filter((_, index) => index !== i))}
-              className="hover:scale-110 transition ml-2"
-            >
-              ×
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div> 
     </>
   );
 }
