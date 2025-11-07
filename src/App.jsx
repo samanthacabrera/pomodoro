@@ -229,7 +229,7 @@ export default function App() {
             {menuOpen && (
                 <div
                   ref={menuRef}
-                  className="absolute top-24 -right-4 flex flex-col space-y-12 shadow-lg border-2 border-[#8B4513] text-white p-8 z-50 w-100 h-[75vh] transform transition-all duration-300"
+                  className="absolute top-24 -right-4 flex flex-col space-y-4 shadow-lg border-2 border-[#8B4513] text-white p-8 z-50 w-100 h-[75vh] transform transition-all duration-300"
                   style={{
                       backgroundImage: `url(${corkboard})`,
                       backgroundSize: "cover",
@@ -244,7 +244,8 @@ export default function App() {
                   </button>
                 {/* To-Do List */}
                 <div
-                  className="relative w-64 h-64 p-4 bg-yellow-200 shadow-lg transform rotate-2"
+                  style={{ fontFamily: 'Chalkboard, "Comic Sans MS"' }}
+                  className="relative w-64 h-64 p-4 bg-yellow-200 shadow-lg transform rotate-2 overflow-y-auto max-h-64 pr-2 scrollbar-thin"
                 >
                   <h2 className="text-lg text-yellow-500 uppercase tracking-widest font-bold mb-2">To-Do List</h2>
                   <div className="flex gap-2 mb-2">
@@ -295,7 +296,8 @@ export default function App() {
                 
                 {/* Info */}
                 <div
-                className="relative w-64 h-64 p-4 bg-yellow-200 shadow-lg transform -rotate-1 text-sm text-yellow-500 tracking-wide"
+                style={{ fontFamily: 'Chalkboard, "Comic Sans MS"' }}
+                className="relative w-64 h-64 p-4 bg-yellow-200 text-sm shadow-lg transform -rotate-1 text-yellow-500 tracking-wide"
                 >
                   <p>The Pomodoro Technique, created by Francesco Cirillo helps you stay focused by breaking work into short sessions. Each Pomodoro is 25 minutes of work followed by a 5-minute break. After four Pomodoros, take a longer 15-minute break to rest and reset.</p>
                 </div>
