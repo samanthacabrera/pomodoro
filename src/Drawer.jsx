@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import corkboard from "/corkboard.avif";
 
 export default function Drawer({ menuOpen, setMenuOpen }) {
   const [tasks, setTasks] = useState([]);
@@ -17,40 +16,47 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
   }, [setMenuOpen]);
 
   return (
-    <div className="absolute top-6 right-4">
-      <button
-        onClick={() => setMenuOpen(!menuOpen)}
-        className="text-2xl md:text-4xl hover:scale-110 transition duration-300"
-      >
-        ☰
-      </button>
+    <>
+        <div className="fixed top-6 right-4">
+        <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="text-2xl md:text-4xl hover:scale-110 hover:text-red-600 transition-all duration-300 font-bold tracking-widest"
+            style={{ fontFamily: '"Courier New", monospace' }}
+        >
+            ☰
+        </button>
+        </div>
 
       {menuOpen && (
         <div
           ref={menuRef}
-          className="absolute top-24 -right-4 flex flex-col space-y-4 shadow-lg border-2 border-[#8B4513] text-white p-8 z-50 w-100 h-[75vh] transform transition-all duration-300"
-          style={{
-            backgroundImage: `url(${corkboard})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
+          className="fixed top-24 right-4 z-40 flex flex-col space-y-6 border-2 border-stone-800 shadow-[6px_6px_0_0_#00000050] text-stone-800 p-8 z-50 w-[22rem] h-[80vh] transform transition-all duration-500 bg-gradient-to-b from-[#f5e6d3] to-[#e3d5b8] rounded-md overflow-hidden"
+          style={{ fontFamily: '"IBM Plex Mono", "Courier New", monospace' }}
         >
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="absolute top-2 right-4 text-2xl"
-          >
-            ×
-          </button>
+            <button
+                onClick={() => setMenuOpen(false)}
+                className="absolute top-4 right-4 text-2xl text-stone-500 hover:text-stone-600 transition"
+            >
+                ×
+            </button>
+            <img
+                src="/pomodoro/tomato.png"
+                alt="tomato"
+                className="absolute -top-8 -left-4 w-40 h-40 opacity-80 -rotate-12 z-0 pointer-events-none"
+            />
+            <img
+                src="/pomodoro/tomato.png"
+                alt="tomato"
+                className="absolute -bottom-8 -right-8 w-40 h-40 opacity-80 z-0 rotate-12 pointer-events-none"
+            />
 
           {/* To-Do List */}
-          <div
-            style={{ fontFamily: 'Chalkboard, "Comic Sans MS"' }}
-            className="relative w-64 h-64 p-4 bg-yellow-200 shadow-lg transform rotate-2 overflow-y-auto max-h-64 pr-2 scrollbar-thin"
-          >
-            <h2 className="text-lg text-yellow-500 uppercase tracking-widest font-bold mb-2">
+          <div className="relative flex flex-col h-64 z-10 rotate-2 bg-[#fdfaf2] border-2 border-stone-700 rounded-md p-4 shadow-[4px_4px_0_0_#00000030]">
+            <h2 className="text-stone-800 text-base font-bold uppercase tracking-widest mb-2">
               To-Do List
             </h2>
-            <div className="flex gap-2 mb-2">
+
+            <div className="flex gap-2 mb-3">
               <input
                 type="text"
                 value={newTask}
@@ -61,8 +67,8 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
                   }
                 }}
                 onChange={(e) => setNewTask(e.target.value)}
-                placeholder="New task..."
-                className="flex-1 p-1 rounded-sm focus:outline-none text-stone-500 placeholder-stone-500 bg-transparent border-b border-dashed border-stone-500"
+                placeholder="Type task..."
+                className="flex-1 bg-transparent border-b border-stone-500 text-stone-700 placeholder-stone-400 focus:outline-none focus:border-stone-400 transition-all text-sm"
               />
               <button
                 onClick={() => {
@@ -70,44 +76,43 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
                   setTasks([...tasks, newTask.trim()]);
                   setNewTask("");
                 }}
-                className="text-yellow-500 text-xl font-bold hover:scale-120 transition"
+                className="text-stone-700 text-lg font-bold hover:text-lime-600 transition"
               >
-                +
+                ＋
               </button>
             </div>
-            <ul className="text-stone-500 space-y-1 max-h-48 overflow-y-auto">
+
+            <ul className="overflow-y-auto space-y-1 text-sm">
               {tasks.map((task, index) => (
-                <div className="flex justify-between w-full" key={index}>
-                  <li className="flex p-1 w-full justify-between border-b border-dashed border-black/30 py-1">
-                    <span>{task}</span>
-                  </li>
-                  <button
-                    className="pl-2 hover:scale-120 transition"
-                    onClick={() =>
-                      setTasks(tasks.filter((_, i) => i !== index))
-                    }
-                  >
-                    ×
-                  </button>
-                </div>
+                <li
+                    key={index}
+                    className="flex justify-between items-center py-1 text-stone-700"
+                    >  
+                    <span className="w-full mr-4 border-b border-dashed border-stone-400">{task}</span>
+                    <button
+                        className="text-lg text-red-700 hover:text-red-800"
+                        onClick={() => setTasks(tasks.filter((_, i) => i !== index))}
+                    >
+                        ✕
+                    </button>
+                </li>
               ))}
             </ul>
           </div>
 
-          {/* Info */}
-          <div
-            style={{ fontFamily: 'Chalkboard, "Comic Sans MS"' }}
-            className="relative w-64 h-64 p-4 bg-yellow-200 text-sm shadow-lg transform -rotate-1 text-yellow-500 tracking-wide"
-          >
+          {/* Info Card */}
+          <div className="bg-[#fdfaf2] z-10 h-64 -rotate-1 border-2 border-stone-700 rounded-md p-4 shadow-[4px_4px_0_0_#00000030] text-stone-700 text-xs leading-relaxed tracking-wide">
+            <h3 className="text-stone-800 text-base font-bold uppercase tracking-widest mb-2">
+              How to Use
+            </h3>
             <p>
-              The Pomodoro Technique, created by Francesco Cirillo, helps you
-              stay focused by breaking work into short sessions. Each Pomodoro
-              is 25 minutes of work followed by a 5-minute break. After four
-              Pomodoros, take a longer 15-minute break to rest and reset.
+              The Pomodoro Technique (by Francesco Cirillo) helps you focus by
+              splitting work into 25-minute sessions with short 5-minute breaks. After
+              four sessions, take a longer break to reset.
             </p>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
