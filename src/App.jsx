@@ -14,6 +14,8 @@ export default function App() {
   const [running, setRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false);
+  const [timeUp, setTimeUp] = useState(false);
+
   const menuRef = useRef(null);
   const intervalRef = useRef(null);
 
@@ -34,6 +36,26 @@ export default function App() {
       }
     };
   }, [running]);
+
+  useEffect(() => {
+    if (secondsLeft === 0 && hasStarted) {
+      setRunning(false);
+      setTimeUp(true);
+      // Change tab title
+      document.title = "Time's up!";
+      // Browser notification
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+          new Notification("Pomodoro Complete!");
+        } else {
+          Notification.requestPermission();
+        }
+      }
+    } else if (!timeUp) {
+      document.title = "Pomodoro";
+    }
+  }, [secondsLeft, hasStarted, timeUp]);
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
