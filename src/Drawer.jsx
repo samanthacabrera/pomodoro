@@ -17,10 +17,10 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
 
   return (
     <>
-        <div className="fixed top-6 right-4">
+        <div className="fixed top-8 right-4">
         <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="text-2xl md:text-4xl hover:scale-110 hover:text-red-600 transition-all duration-300 font-bold tracking-widest"
+            className="text-2xl md:text-4xl hover:scale-110 hover:text-red-600 transition-all duration-300"
             style={{ fontFamily: '"Courier New", monospace' }}
         >
             ☰

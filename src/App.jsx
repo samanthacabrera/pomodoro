@@ -18,6 +18,7 @@ export default function App() {
 
   const menuRef = useRef(null);
   const intervalRef = useRef(null);
+  const timeUpRef = useRef(null);
 
   useEffect(() => {
     if (running && intervalRef.current === null) {
@@ -147,7 +148,13 @@ export default function App() {
   }
 
   return `rgb(185,28,28)`; 
-};
+  };
+  
+  const handleNextOption = (nextMode) => {
+    changeMode(nextMode);
+    setTimeUp(false);
+    setHasStarted(false);
+  };
   
   const buttonBase = `px-3 py-2 md:px-6 md:py-3 rounded-2xl font-bold text-xs md:text-base border-2 border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
   const buttonActive = `bg-red-700 text-white hover:bg-red-600`;
@@ -291,6 +298,46 @@ export default function App() {
         className="fixed inset-0 bg-black/20 pointer-events-none transition-opacity duration-300"
       ></div>
     )}
+    
+    {timeUp && (() => {
+      let options = [];
+      if (mode === "pomodoro") {
+        options = [
+          { label: "Short Break", value: "short" },
+          { label: "Long Break", value: "long" },
+        ];
+      } else if (mode === "short" || mode === "long") {
+        options = [{ label: "Pomodoro", value: "pomodoro" }];
+      } else { 
+        options = [
+          { label: "Pomodoro", value: "pomodoro" },
+          { label: "Short Break", value: "short" },
+          { label: "Long Break", value: "long" },
+        ];
+      }
+
+      return (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
+          <div 
+            ref={timeUpRef}
+            className="bg-white rounded px-12 py-6 shadow-xl text-red-700 flex flex-col space-y-6 md:space-y-8 items-center">
+            <h3 className="text-lg font-semibold">Time's Up!</h3>
+            <p className="text-center">Choose your next session:</p>
+            <div className="flex gap-3">
+              {options.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleNextOption(opt.value)}
+                  className={`${buttonBase} ${buttonActive}`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    })()}
     </>
   );
 }
