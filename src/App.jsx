@@ -8,11 +8,13 @@ export default function App() {
   const LONG_BREAK = 15 * 60;
 
   const [mode, setMode] = useState("pomodoro");
-  const [custom, setCustom] = useState(25);
+  const [custom, setCustom] = useState(1);
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(POMODORO);
   const [running, setRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false)
+  const [startTime, setStartTime] = useState(null);
+  const [duration, setDuration] = useState(POMODORO);
   const [menuOpen, setMenuOpen] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
 
@@ -21,22 +23,42 @@ export default function App() {
   const timeUpRef = useRef(null);
 
   useEffect(() => {
-    if (running && intervalRef.current === null) {
-      intervalRef.current = setInterval(() => {
-        setSecondsLeft((s) => (s > 0 ? s - 1 : 0));
-      }, 1000);
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().then(permission => {
+        if (permission !== "granted") {
+          alert("To get timer alerts, please allow notifications in your browser settings.");
+        }
+      });
     }
-    if (!running && intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+  }, []);
+
+  // --- Timestamp-based timer (accurate even when tab is inactive) ---
+  useEffect(() => {
+    let frame;
+
+    const update = () => {
+      if (!running || !startTime) return;
+
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const remaining = Math.max(duration - elapsed, 0);
+      setSecondsLeft(remaining);
+
+      if (remaining > 0) {
+        frame = requestAnimationFrame(update);
+      } else {
+        setRunning(false);
+        setTimeUp(true);
+        document.title = "Time's up!";
       }
     };
-  }, [running]);
+
+    if (running) {
+      frame = requestAnimationFrame(update);
+    }
+
+    return () => cancelAnimationFrame(frame);
+  }, [running, startTime, duration]);
+
 
   useEffect(() => {
     if (secondsLeft === 0 && hasStarted) {
@@ -51,6 +73,10 @@ export default function App() {
         } else {
           Notification.requestPermission();
         }
+      }
+      // Vibration (if supported)
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 200]);
       }
     } else if (!timeUp) {
       document.title = "Pomodoro";
@@ -74,34 +100,52 @@ export default function App() {
   const seconds = String(secondsLeft % 60).padStart(2, "0");
 
   const toggle = () => {
-    if (!running) setHasStarted(true); 
+    if (!running) {
+      setHasStarted(true);
+      setStartTime(Date.now() - (duration - secondsLeft) * 1000);
+    }
     setRunning(r => !r);
   };
 
   const reset = () => {
     setRunning(false);
     setHasStarted(false);
+    setTimeUp(false);
 
-    if (mode === "pomodoro") setSecondsLeft(POMODORO);
-    else if (mode === "short") setSecondsLeft(SHORT_BREAK);
-    else if (mode === "long") setSecondsLeft(LONG_BREAK);
-    else if (mode === "custom") setSecondsLeft(custom * 60);
+    let newDuration;
+    if (mode === "pomodoro") newDuration = POMODORO;
+    else if (mode === "short") newDuration = SHORT_BREAK;
+    else if (mode === "long") newDuration = LONG_BREAK;
+    else newDuration = custom * 60;
+
+    setDuration(newDuration);
+    setSecondsLeft(newDuration);
+    setStartTime(null);
   };
 
   const changeMode = (newMode) => {
     setRunning(false);
+    setHasStarted(false);
+    setTimeUp(false);
     setMode(newMode);
-    if (newMode === "pomodoro") setSecondsLeft(POMODORO);
-    else if (newMode === "short") setSecondsLeft(SHORT_BREAK);
-    else if (newMode === "long") setSecondsLeft(LONG_BREAK);
-    else if (newMode === "custom") setSecondsLeft(custom * 60);
+
+    let newDuration;
+    if (newMode === "pomodoro") newDuration = POMODORO;
+    else if (newMode === "short") newDuration = SHORT_BREAK;
+    else if (newMode === "long") newDuration = LONG_BREAK;
+    else newDuration = custom * 60;
+
+    setDuration(newDuration);
+    setSecondsLeft(newDuration);
+    setStartTime(null);
   };
 
   useEffect(() => {
     if (mode === "custom") {
+      setDuration(custom * 60);
       setSecondsLeft(custom * 60);
     }
-  }, [custom]);
+  }, [custom, mode]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && showCustomModal) {
