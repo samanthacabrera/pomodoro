@@ -19,30 +19,27 @@ export default function App() {
   const [timeUp, setTimeUp] = useState(false);
 
   const menuRef = useRef(null);
-  const intervalRef = useRef(null);
   const timeUpRef = useRef(null);
 
   useEffect(() => {
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission().then(permission => {
-        if (permission !== "granted") {
-          alert("To get timer alerts, please allow notifications in your browser settings.");
-        }
-      });
+    if ("Notification" in window) {
+      if (Notification.permission === "default") {
+        Notification.requestPermission().then(permission => {
+          if (permission !== "granted") {
+            alert("To get timer alerts, please allow notifications in your browser settings.");
+          }
+        });
+      }
     }
   }, []);
 
-  // --- Timestamp-based timer (accurate even when tab is inactive) ---
   useEffect(() => {
     let frame;
-
     const update = () => {
       if (!running || !startTime) return;
-
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
       const remaining = Math.max(duration - elapsed, 0);
       setSecondsLeft(remaining);
-
       if (remaining > 0) {
         frame = requestAnimationFrame(update);
       } else {
@@ -51,14 +48,11 @@ export default function App() {
         document.title = "Time's up!";
       }
     };
-
     if (running) {
       frame = requestAnimationFrame(update);
     }
-
     return () => cancelAnimationFrame(frame);
   }, [running, startTime, duration]);
-
 
   useEffect(() => {
     if (secondsLeft === 0 && hasStarted) {
@@ -69,14 +63,14 @@ export default function App() {
       // Browser notification
       if ("Notification" in window) {
         if (Notification.permission === "granted") {
-          new Notification("Pomodoro Complete!");
-        } else {
+          new Notification("Time's up!", {
+            body: "Your current session has ended",
+            icon: "/pomodoro/tomato.png",
+            silent: false,
+          });
+        } else if (Notification.permission === "default") {
           Notification.requestPermission();
         }
-      }
-      // Vibration (if supported)
-      if (navigator.vibrate) {
-        navigator.vibrate([200, 100, 200]);
       }
     } else if (!timeUp) {
       document.title = "Pomodoro";
@@ -157,6 +151,39 @@ export default function App() {
       setShowCustomModal(false);
     }
   };
+
+  useEffect(() => {
+    const handleShortcut = (e) => {
+      if (showCustomModal) return; 
+      switch (e.key) {
+        case " ": 
+          e.preventDefault(); 
+          toggle();
+          break;
+        case "r":
+        case "R":
+          reset();
+          break;
+        case "1":
+          changeMode("pomodoro");
+          break;
+        case "2":
+          changeMode("short");
+          break;
+        case "3":
+          changeMode("long");
+          break;
+        case "4":
+          changeMode("custom");
+          setShowCustomModal(true);
+          break;
+      }
+    };
+    document.addEventListener("keydown", handleShortcut);
+    return () => {
+      document.removeEventListener("keydown", handleShortcut);
+    };
+  }, [showCustomModal, toggle, reset, changeMode]);
 
   const totalTime =
     mode === "pomodoro"

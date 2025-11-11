@@ -3,6 +3,33 @@ import { useEffect, useRef, useState } from "react";
 export default function Drawer({ menuOpen, setMenuOpen }) {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
+  const [cards, setCards] = useState([
+    {
+      id: "howTo",
+      title: "How to Use",
+      content: (
+        <p>
+          The Pomodoro Technique (by Francesco Cirillo) helps you focus by
+          splitting work into 25-minute focus sessions with short 5-minute breaks. After
+          four sessions, take a longer break to reset.
+        </p>
+      ),
+    },
+    {
+      id: "shortcuts",
+      title: "Keyboard Shortcuts",
+      content: (
+        <ul className="flex flex-col space-y-1 justify-between text-stone-700 text-xs">
+          <li><strong>Space</strong> - Start / Pause </li>
+          <li><strong>R/r</strong> - Reset</li>
+          <li><strong>1</strong> - Pomodoro</li>
+          <li><strong>2</strong> - Short Break</li>
+          <li><strong>3</strong> - Long Break</li>
+        </ul>
+      ),
+    },
+  ]);
+
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -14,6 +41,17 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setMenuOpen]);
+
+  const bringCardToFront = (id) => {
+    setCards(prevCards => {
+      if (prevCards[0].id === id) {
+        return [...prevCards.slice(1), prevCards[0]]; 
+      }
+      const cardToFront = prevCards.find(c => c.id === id);
+      const otherCards = prevCards.filter(c => c.id !== id);
+      return [cardToFront, ...otherCards];
+    });
+  };
 
   return (
     <>
@@ -55,7 +93,6 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
             <h2 className="text-stone-800 text-base font-bold uppercase tracking-widest mb-2">
               To-Do List
             </h2>
-
             <div className="flex gap-2 mb-3">
               <input
                 type="text"
@@ -100,16 +137,28 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
             </ul>
           </div>
 
-          {/* Info Card */}
-          <div className="bg-[#fdfaf2] z-10 h-64 -rotate-1 border-2 border-stone-700 rounded-md p-4 shadow-[4px_4px_0_0_#00000030] text-stone-700 text-xs leading-relaxed tracking-wide">
-            <h3 className="text-stone-800 text-base font-bold uppercase tracking-widest mb-2">
-              How to Use
-            </h3>
-            <p>
-              The Pomodoro Technique (by Francesco Cirillo) helps you focus by
-              splitting work into 25-minute sessions with short 5-minute breaks. After
-              four sessions, take a longer break to reset.
-            </p>
+          {/* More Info Cards */}
+          <div className="relative flex-1">
+            {cards.map((card, index) => (
+              <div
+                key={card.id}
+                onClick={() => bringCardToFront(card.id)}
+                className="absolute w-full h-60 p-4 rounded-md border-2 border-stone-700 bg-[#fdfaf2] shadow-[4px_4px_0_0_#00000030] cursor-pointer"
+                style={{
+                  top: `${index * 44}px`,      
+                  left: `${index * 12}px`,      
+                  zIndex: index,                
+                  transform: `rotate(${index % 2 === 0 ? "-1deg" : "2deg"})`,
+                }}
+              >
+                <h3 className="text-stone-800 text-base font-bold uppercase tracking-widest mb-2">
+                  {card.title}
+                </h3>
+                <div className="text-stone-700 text-xs leading-relaxed tracking-wide">
+                  {card.content}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
