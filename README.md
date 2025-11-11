@@ -1,5 +1,5 @@
 # POMODORO
 
-A minimal timer web app that follows the classic **Pomodoro Technique**: 25 minutes of work followed by short breaks.
+A minimal timer web app that follows the classic Pomodoro Technique.
 
 Try it here: [https://samanthacabrera.github.io/pomodoro/](https://samanthacabrera.github.io/pomodoro/)
