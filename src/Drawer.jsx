@@ -103,11 +103,10 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
 
   return (
     <>
-      <div className="fixed top-8 right-4">
+      <div className="fixed top-6 right-4">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="text-2xl md:text-4xl hover:scale-110 hover:text-red-600 transition-all duration-300"
-          style={{ fontFamily: '"Courier New", monospace' }}
         >
           ☰
         </button>
@@ -116,30 +115,33 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
       {menuOpen && (
         <div
           ref={menuRef}
-          className="fixed top-44 right-1/2 translate-x-1/2 md:right-4 md:translate-x-0 z-40 flex flex-col space-y-6 border-2 border-stone-800 shadow-[6px_6px_0_0_#00000050] text-stone-800 p-8 w-[70vw] md:w-[25vw] h-[55vh] md:h-[60vh] transition-all duration-500 bg-gradient-to-b from-[#f5e6d3] to-[#e3d5b8] rounded-md overflow-hidden"
-          style={{ fontFamily: '"IBM Plex Mono", "Courier New", monospace' }}
+          className={`fixed top-0 right-0 h-full w-[70vw] md:w-[25vw] z-50 bg-gradient-to-b from-red-700 to-red-800 p-6 flex flex-col transition-transform duration-500 ${
+            menuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
         >
           <button
             onClick={() => setMenuOpen(false)}
-            className="absolute top-4 right-4 text-2xl text-stone-500 hover:text-stone-600 transition"
+            className="absolute top-4 right-4 text-2xl text-yellow-50 hover:scale-110 transition"
           >
             ×
           </button>
+          
+          <h2 className="text-2xl md:text-6xl text-yellow-50 uppercase tracking-widest font-bold border-b-2 border-yellow-50 border-dotted">
+            Dash<span className="md:block">board</span>
+          </h2>
 
-          <div className="relative flex flex-col items-center justify-center flex-1 z-10">
+          <div className="relative flex flex-col items-center justify-center flex-1">
             {cards.map((card, index) => (
               <div
                 key={card.id}
-                onClick={() => {
-                  if (index !== 0) cycleCards();
-                }}
-                className={`absolute w-full h-64 p-4 rounded-md border-2 border-stone-700 bg-[#fdfaf2] shadow-[4px_4px_0_0_#00000030] overflow-hidden transition-transform duration-300 ${
+                onClick={() => index !== 0 && cycleCards()}
+                className={`absolute w-full h-96 p-4 rounded-md border-2 border-dotted border-stone-700 bg-yellow-50 shadow-[4px_4px_0_0_#00000030] overflow-hidden transition-transform duration-300 ${
                   index === 0 ? "cursor-default" : "cursor-pointer"
                 }`}
                 style={{
-                  top: `${(cards.length - 1 - index) * 40}px`,
+                  top: `calc(50% - ${cards.length * 150 / 2 + (cards.length - 1) * 20}px + ${((cards.length - 1 - index) * 40)}px)`,
                   left: "50%",
-                  zIndex: cards.length - index,   
+                  zIndex: cards.length - index,
                   transform: `translateX(-50%) rotate(${index % 2 === 0 ? "-1deg" : "2deg"})`,
                 }}
               >
