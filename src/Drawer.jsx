@@ -116,7 +116,7 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
       {menuOpen && (
         <div
           ref={menuRef}
-          className="fixed top-44 right-4 z-40 flex flex-col space-y-6 border-2 border-stone-800 shadow-[6px_6px_0_0_#00000050] text-stone-800 p-8 w-[25vw] h-[60vh] transition-all duration-500 bg-gradient-to-b from-[#f5e6d3] to-[#e3d5b8] rounded-md overflow-hidden"
+          className="fixed top-44 right-1/2 translate-x-1/2 md:right-4 md:translate-x-0 z-40 flex flex-col space-y-6 border-2 border-stone-800 shadow-[6px_6px_0_0_#00000050] text-stone-800 p-8 w-[70vw] md:w-[25vw] h-[55vh] md:h-[60vh] transition-all duration-500 bg-gradient-to-b from-[#f5e6d3] to-[#e3d5b8] rounded-md overflow-hidden"
           style={{ fontFamily: '"IBM Plex Mono", "Courier New", monospace' }}
         >
           <button
@@ -126,17 +126,21 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
             ×
           </button>
 
-          <div className="relative flex-1 z-10">
+          <div className="relative flex flex-col items-center justify-center flex-1 z-10">
             {cards.map((card, index) => (
               <div
                 key={card.id}
-                onClick={cycleCards}
-                className="absolute w-full h-64 p-4 rounded-md border-2 border-stone-700 bg-[#fdfaf2] shadow-[4px_4px_0_0_#00000030] cursor-pointer overflow-hidden"
+                onClick={() => {
+                  if (index !== 0) cycleCards();
+                }}
+                className={`absolute w-full h-64 p-4 rounded-md border-2 border-stone-700 bg-[#fdfaf2] shadow-[4px_4px_0_0_#00000030] overflow-hidden transition-transform duration-300 ${
+                  index === 0 ? "cursor-default" : "cursor-pointer"
+                }`}
                 style={{
-                  top: `${index * 44}px`,
-                  left: `${index * 12}px`,
-                  zIndex: index,
-                  transform: `rotate(${index % 2 === 0 ? "-1deg" : "2deg"})`,
+                  top: `${(cards.length - 1 - index) * 40}px`,
+                  left: "50%",
+                  zIndex: cards.length - index,   
+                  transform: `translateX(-50%) rotate(${index % 2 === 0 ? "-1deg" : "2deg"})`,
                 }}
               >
                 <h3 className="text-stone-800 text-base font-bold uppercase tracking-widest mb-2">
