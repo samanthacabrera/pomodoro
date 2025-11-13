@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 function TodoList({ tasks, setTasks, newTask, setNewTask }) {
   return (
@@ -204,6 +205,14 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, timeUp}) {
               </div>
             ))}
           </div>
+
+          <Link
+            to="/pomodoro/legal"
+            onClick={() => setMenuOpen(false)}
+            className="absolute bottom-2 right-2 text-xs text-yellow-50/50 hover:text-yellow-50/70 transition"
+          >
+            Legal & Privacy
+          </Link>
         </div>
       )}
     </>
