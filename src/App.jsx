@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from "react";
+import Tracker from "./Tracker";
 import Drawer from "./Drawer";
 
 export default function App() {
 
-  const POMODORO = 25 * 60;
-  const SHORT_BREAK = 5 * 60;
-  const LONG_BREAK = 15 * 60;
+  // const POMODORO = 25 * 60;
+  // const SHORT_BREAK = 5 * 60;
+  // const LONG_BREAK = 15 * 60;
+
+  const POMODORO = 0.5 * 60;
+  const SHORT_BREAK = 0.1 * 60;
+  const LONG_BREAK = 0.3 * 60;
 
   const [mode, setMode] = useState("pomodoro");
   const [custom, setCustom] = useState(1);
@@ -17,6 +22,7 @@ export default function App() {
   const [duration, setDuration] = useState(POMODORO);
   const [menuOpen, setMenuOpen] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
+  const [finishedMode, setFinishedMode] = useState(null);
 
   const menuRef = useRef(null);
   const timeUpRef = useRef(null);
@@ -58,6 +64,7 @@ export default function App() {
     if (secondsLeft === 0 && hasStarted) {
       setRunning(false);
       setTimeUp(true);
+      setFinishedMode(mode);
       // Change tab title
       document.title = "Time's up!";
       // Browser notification
@@ -361,8 +368,10 @@ export default function App() {
             Reset
           </button>
         </div>
+        
+        <Tracker currentMode={mode} timeUp={timeUp} onNextMode={handleNextOption} />
       </div>
-    </div>
+    </div> 
     
     {hasStarted && !running && (
       <div
@@ -372,12 +381,12 @@ export default function App() {
     
     {timeUp && (() => {
       let options = [];
-      if (mode === "pomodoro") {
+      if (finishedMode === "pomodoro") {
         options = [
           { label: "Short Break", value: "short" },
           { label: "Long Break", value: "long" },
         ];
-      } else if (mode === "short" || mode === "long") {
+      } else if (finishedMode === "short" || finishedMode === "long") {
         options = [{ label: "Pomodoro", value: "pomodoro" }];
       } else { 
         options = [
@@ -386,7 +395,6 @@ export default function App() {
           { label: "Long Break", value: "long" },
         ];
       }
-
       return (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
           <div 

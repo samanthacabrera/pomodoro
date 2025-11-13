@@ -15,7 +15,7 @@ function TodoListContent({ tasks, setTasks, newTask, setNewTask }) {
           }}
           onChange={(e) => setNewTask(e.target.value)}
           placeholder="Type task..."
-          className="flex-1 bg-transparent border-b border-stone-500 text-stone-700 placeholder-stone-400 focus:outline-none focus:border-stone-400 transition-all text-sm"
+          className="flex-1 bg-transparent border-b border-stone-500 text-stone-700 placeholder-stone-400 rounded-none focus:outline-none focus:border-stone-400 transition-all text-sm"
         />
         <button
           onClick={() => {
@@ -126,7 +126,7 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
             ×
           </button>
           
-          <h2 className="text-2xl md:text-6xl text-yellow-50 uppercase tracking-widest font-bold border-b-2 border-yellow-50 border-dotted">
+          <h2 className="text-2xl md:text-4xl text-yellow-50 uppercase tracking-widest font-bold border-b-2 border-yellow-50 border-dotted">
             Dash<span className="md:block">board</span>
           </h2>
 
