@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-function TodoListContent({ tasks, setTasks, newTask, setNewTask }) {
+function TodoList({ tasks, setTasks, newTask, setNewTask }) {
   return (
     <>
       <div className="flex gap-2 mb-3">
@@ -50,10 +50,36 @@ function TodoListContent({ tasks, setTasks, newTask, setNewTask }) {
   );
 }
 
-export default function Drawer({ menuOpen, setMenuOpen }) {
+function Tracker({ counts, resetTracker }) {
+  return (
+    <div className="flex flex-col space-y-4">
+      <div>
+        <p className="font-bold">Pomodoros</p>
+        <p>{counts.pomodoro}</p>
+      </div>
+      <div>
+        <p className="font-bold">Short Breaks</p>
+        <p>{counts.short}</p>
+      </div>
+      <div>
+        <p className="font-bold">Long Breaks</p>
+        <p>{counts.long}</p>
+      </div>
+      <button onClick={resetTracker} className="border border-red-700 rounded p-1 w-fit hover:bg-red-700 hover:text-yellow-50 transition-all">Reset Tracker</button>
+    </div>
+  );
+}
+
+export default function Drawer({ menuOpen, setMenuOpen, mode, timeUp}) {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
+  const [counts, setCounts] = useState({ pomodoro: 0, short: 0, long: 0 });
   const [cards, setCards] = useState([
+    {
+      id: "tracker",
+      title: "Session Tracker",
+      content: null,
+    },
     {
       id: "todo",
       title: "To-Do List",
@@ -64,9 +90,8 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
       title: "How to Use",
       content: (
         <p>
-          The Pomodoro Technique (by Francesco Cirillo) helps you focus by
-          splitting work into 25-minute focus sessions with short 5-minute breaks. After
-          four sessions, take a longer break to reset.
+          The Pomodoro Technique helps you focus by splitting work into 25-minute
+          focus sessions with short breaks. After four, take a long break.
         </p>
       ),
     },
@@ -74,12 +99,13 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
       id: "shortcuts",
       title: "Keyboard Shortcuts",
       content: (
-        <ul className="flex flex-col space-y-1 justify-between text-stone-700 text-xs">
+        <ul className="flex flex-col space-y-1 text-xs">
           <li><strong>Space</strong> - Start / Pause</li>
-          <li><strong>R/r</strong> - Reset</li>
-          <li><strong>1</strong> - Pomodoro</li>
-          <li><strong>2</strong> - Short Break</li>
-          <li><strong>3</strong> - Long Break</li>
+          <li><strong>r</strong> - Reset</li>
+          <li><strong>p</strong> - Pomodoro</li>
+          <li><strong>s</strong> - Short Break</li>
+          <li><strong>l</strong> - Long Break</li>
+          <li><strong>c</strong> - Custom Timer</li>
         </ul>
       ),
     },
@@ -88,8 +114,19 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
   const menuRef = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+    if (!timeUp) return;
+
+    setCounts((prev) => ({
+      ...prev,
+      [mode]: prev[mode] + 1,
+    }));
+  }, [timeUp, mode]);
+
+  const resetTracker = () => setCounts({ pomodoro: 0, short: 0, long: 0 });
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
         setMenuOpen(false);
       }
     };
@@ -97,9 +134,7 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setMenuOpen]);
 
-  const cycleCards = () => {
-    setCards((prev) => [...prev.slice(1), prev[0]]);
-  };
+  const cycleCards = () => setCards((prev) => [...prev.slice(1), prev[0]]);
 
   return (
     <>
@@ -125,7 +160,7 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
           >
             ×
           </button>
-          
+
           <h2 className="text-2xl md:text-4xl text-yellow-50 uppercase tracking-widest font-bold border-b-2 border-yellow-50 border-dotted">
             Dash<span className="md:block">board</span>
           </h2>
@@ -139,10 +174,14 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
                   index === 0 ? "cursor-default" : "cursor-pointer"
                 }`}
                 style={{
-                  top: `calc(50% - ${cards.length * 150 / 2 + (cards.length - 1) * 20}px + ${((cards.length - 1 - index) * 40)}px)`,
+                  top: `calc(50% - ${
+                    (cards.length * 100) / 2 + (cards.length - 1) * 20
+                  }px + ${(cards.length - 1 - index) * 40}px)`,
                   left: "50%",
                   zIndex: cards.length - index,
-                  transform: `translateX(-50%) rotate(${index % 2 === 0 ? "-1deg" : "2deg"})`,
+                  transform: `translateX(-50%) rotate(${
+                    index % 2 === 0 ? "-1deg" : "2deg"
+                  })`,
                 }}
               >
                 <h3 className="text-stone-800 text-base font-bold uppercase tracking-widest mb-2">
@@ -150,12 +189,14 @@ export default function Drawer({ menuOpen, setMenuOpen }) {
                 </h3>
                 <div className="text-stone-700 text-xs leading-relaxed tracking-wide h-full overflow-y-auto pr-2">
                   {card.id === "todo" ? (
-                    <TodoListContent
+                    <TodoList
                       tasks={tasks}
                       setTasks={setTasks}
                       newTask={newTask}
                       setNewTask={setNewTask}
                     />
+                  ) : card.id === "tracker" ? (
+                    <Tracker counts={counts} resetTracker={resetTracker} />
                   ) : (
                     card.content
                   )}

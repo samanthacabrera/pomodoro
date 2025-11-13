@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Tracker from "./Tracker";
 import Drawer from "./Drawer";
 
 export default function App() {
@@ -71,7 +70,7 @@ export default function App() {
       if ("Notification" in window) {
         if (Notification.permission === "granted") {
           new Notification("Time's up!", {
-            body: "Your current session has ended",
+            body: "Your session has ended",
             icon: "/pomodoro/tomato.png",
             silent: false,
           });
@@ -167,20 +166,24 @@ export default function App() {
           e.preventDefault(); 
           toggle();
           break;
-        case "r":
         case "R":
+        case "r":
           reset();
           break;
-        case "1":
+        case "P":
+        case "p":
           changeMode("pomodoro");
           break;
-        case "2":
+        case "S":
+        case "s":
           changeMode("short");
           break;
-        case "3":
+        case "L":
+        case "l":
           changeMode("long");
           break;
-        case "4":
+        case "C":
+        case "c":
           changeMode("custom");
           setShowCustomModal(true);
           break;
@@ -245,7 +248,7 @@ export default function App() {
         <div className="flex flex-col md:flex-row justify-between w-screen px-4">
           <div className="flex-col">
             <h1 className="text-4xl uppercase tracking-widest font-bold">Pomodoro</h1>
-            <h6 className="text-xs font-medium hover:text-red-600 transition">Made by <a href="https://github.com/samanthacabrera">Sam Cabrera</a></h6>
+            <h6 className="text-xs font-medium w-fit border-b border-transparent hover:border-b hover:border-dotted hover:border-red-700 transition">Made by <a href="https://github.com/samanthacabrera">Sam Cabrera</a></h6>
           </div>
           
             {/* Modes  */}
@@ -324,7 +327,7 @@ export default function App() {
             </div>
           </div>
 
-        <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+          <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} mode={mode} timeUp={timeUp} />
         
         {/* Timer */}
         <div className="relative w-96 h-96 md:w-[45vw] md:h-[55vh] flex items-center justify-center">
@@ -368,8 +371,6 @@ export default function App() {
             Reset
           </button>
         </div>
-        
-        <Tracker currentMode={mode} timeUp={timeUp} onNextMode={handleNextOption} />
       </div>
     </div> 
     
