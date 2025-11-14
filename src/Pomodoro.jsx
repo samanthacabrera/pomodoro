@@ -3,17 +3,18 @@ import Drawer from "./Drawer";
 
 export default function Pomodoro() {
 
-  const POMODORO = 25 * 60;
-  const SHORT_BREAK = 5 * 60;
-  const LONG_BREAK = 15 * 60;
+  // const POMODORO = 25 * 60;
+  // const SHORT_BREAK = 5 * 60;
+  // const LONG_BREAK = 15 * 60;
 
   // For development & testing 
-  // const POMODORO = 0.3 * 60;
-  // const SHORT_BREAK = 0.1 * 60;
-  // const LONG_BREAK = 0.2 * 60;
+  const POMODORO = 0.3 * 60;
+  const SHORT_BREAK = 0.1 * 60;
+  const LONG_BREAK = 0.2 * 60;
 
   const [mode, setMode] = useState("pomodoro");
   const [custom, setCustom] = useState(1);
+  const [pendingCustom, setPendingCustom] = useState(custom);
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(POMODORO);
   const [running, setRunning] = useState(false);
@@ -84,7 +85,6 @@ export default function Pomodoro() {
     }
   }, [secondsLeft, hasStarted, timeUp]);
 
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -141,12 +141,11 @@ export default function Pomodoro() {
     setStartTime(null);
   };
 
-  useEffect(() => {
-    if (mode === "custom") {
-      setDuration(custom * 60);
-      setSecondsLeft(custom * 60);
-    }
-  }, [custom, mode]);
+  const openCustomModal = () => {
+    setPendingCustom(custom);
+    setMode("custom");
+    setShowCustomModal(true);
+  };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && showCustomModal) {
@@ -271,51 +270,53 @@ export default function Pomodoro() {
                 Long Break
               </button>
               <button
-                onClick={() => {
-                  changeMode("custom");
-                  setShowCustomModal(true);}}
+                onClick={openCustomModal}
                 className={`${buttonBase} ${mode === "custom" ? buttonActive : buttonInactive}`}
               >
                 Custom
               </button>
-               {showCustomModal && (
-                <div className="fixed inset-0 flex items-center justify-center z-50">
-                  <div className="bg-white rounded px-12 py-6 shadow-xl text-red-700 flex flex-col space-y-6 md:space-y-8 items-center">
-                    <h3 className="text-lg font-semibold">Set Custom Time</h3>
-                    <div className="flex-row space-x-4">
+              {showCustomModal && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
+                  <div className="bg-yellow-50 border-2 border-red-700 rounded-xl px-16 py-8 shadow-[4px_4px_0_rgba(0,0,0,1)] text-red-700 flex flex-col space-y-6 md:space-y-8 items-center">
+                    <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider">
+                      Set Custom Timer
+                    </h3>
+                    <div className="flex-row space-x-4 items-center">
                       <input
                         type="number"
                         min="1"
                         max="180"
-                        value={custom}
-                        className="border border-red-700 rounded px-3 py-2 w-24 text-center focus:outline-none"
+                        value={pendingCustom}
+                        className="border border-red-700 rounded px-3 py-2 w-24 text-center font-bold text-red-700 focus:outline-none"
                         onKeyDown={handleKeyDown}
-                        onBlur={() => {if (custom === "" || isNaN(custom)) { setCustom(1); }}}
+                        onBlur={() => { if (pendingCustom === "" || isNaN(pendingCustom)) setPendingCustom(1); }}
                         onChange={(e) => {
-                            const val = e.target.value;
-                            if (val === "") {
-                              setCustom("");
-                            } else {
-                              const num = Math.max(1, Math.min(180, Number(val)));
-                              setCustom(num);
-                            }
+                          const val = e.target.value;
+                          if (val === "") setPendingCustom("");
+                          else setPendingCustom(Math.max(1, Math.min(180, Number(val))));
                         }}
                       />
-                      <span>minutes</span>
+                      <span className="font-bold uppercase text-sm md:text-base">minutes</span>
                     </div>
                     <div className="flex gap-3">
                       <button
                         onClick={() => {
-                          setSecondsLeft(custom * 60);
-                          setShowCustomModal(false);
+                          const finalValue = pendingCustom || 1;
+                          setCustom(finalValue);         
+                          setDuration(finalValue * 60);   
+                          setSecondsLeft(finalValue * 60);
+                          setStartTime(Date.now());        
+                          setRunning(true);               
+                          setHasStarted(true);             
+                          setShowCustomModal(false);  
                         }}
                         className={`${buttonBase} ${buttonActive}`}
                       >
                         Save
                       </button>
                       <button
-                        onClick={() => setShowCustomModal(false)}
-                        className={`${buttonBase} ${buttonInactive}`}
+                        onClick={() => {setShowCustomModal(false);}}
+                        className={`${buttonBase} ${buttonActive}`}
                       >
                         Cancel
                       </button>
