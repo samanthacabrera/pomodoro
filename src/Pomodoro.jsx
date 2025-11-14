@@ -24,6 +24,7 @@ export default function Pomodoro() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
   const [finishedMode, setFinishedMode] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   const menuRef = useRef(null);
   const customRef = useRef(null);
@@ -334,78 +335,100 @@ export default function Pomodoro() {
 
           <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} mode={mode} custom={custom} timeUp={timeUp} />
         
-        {/* Timer */}
-        <div className="relative w-96 h-96 md:w-[45vw] md:h-[55vh] flex items-center justify-center">
-          <img
-            src="/pomodoro/tomato.png"
-            alt="tomato"
-            className="absolute inset-0 w-full h-full object-contain"
-            draggable="false"
-          />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="mt-12 text-center">
-              <div className="text-4xl md:text-6xl font-medium text-white select-none">
-                {minutes}:{seconds}
+          {/* Timer */}
+          <div className="relative w-96 h-96 md:w-[45vw] md:h-[55vh] flex items-center justify-center">
+            <img
+              src="/pomodoro/tomato.png"
+              alt="tomato"
+              className="absolute inset-0 w-full h-full object-contain"
+              draggable="false"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="mt-12 text-center">
+                <div className="text-4xl md:text-6xl font-medium text-white select-none">
+                  {minutes}:{seconds}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Progress Bar */}
-        <div
-          className="fixed bottom-0 left-0 h-3 md:h-4 transition-all duration-300"
-          style={{
-            width: `${(1 - progress) * 100}%`,
-            backgroundColor: getTomatoColor(progress),
-            height: running ? "20px" : "16px",
-            transition: "width 1s linear, background-color 0.1s linear",
-          }}
-        ></div>
+          {/* Progress Bar */}
+          <div
+            className="fixed bottom-0 left-0 h-3 md:h-4 transition-all duration-300"
+            style={{
+              width: `${(1 - progress) * 100}%`,
+              backgroundColor: getTomatoColor(progress),
+              height: running ? "20px" : "16px",
+              transition: "width 1s linear, background-color 0.1s linear",
+            }}
+          ></div>
 
-        {/* Controls */}
-        <div className="flex gap-4">
-          <button
-            onClick={toggle}
-            className={`${buttonBase} ${buttonInactive} `}>
-            {running ? "Pause" : "Start"}
-          </button>
-          <button
-            onClick={reset}
-            className={`${buttonBase} ${buttonInactive} `}
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-    
-    {hasStarted && !running && (
-      <div
-        className="fixed inset-0 bg-black/20 pointer-events-none transition-opacity duration-300"
-      ></div>
-    )}
-    
-    {timeUp && (
-      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
-        <div 
-          ref={timeUpRef}
-          className="relative bg-yellow-50 border-2 border-red-700 rounded-xl px-16 py-8 shadow-[4px_4px_0_rgba(0,0,0,1)] text-red-700 flex flex-col space-y-6 md:space-y-8 items-center"
-        >
-          <h3 className="text-lg font-semibold">Time's Up!</h3>
-          <p className="text-center">Choose your next session:</p>
-          <div className="flex gap-3">
-            {options.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => handleNextOption(opt.value)}
-                className={`${buttonBase} ${buttonActive}`}
-              >
-                {opt.label}
-              </button>
-            ))}
+          {/* Controls */}
+          <div className="flex gap-4">
+            <button
+              onClick={toggle}
+              className={`${buttonBase} ${buttonInactive} `}>
+              {running ? "Pause" : "Start"}
+            </button>
+            <button
+              onClick={reset}
+              className={`${buttonBase} ${buttonInactive} `}
+            >
+              Reset
+            </button>
           </div>
         </div>
-      </div>
+      
+      {hasStarted && !running && (
+        <div
+          className="fixed inset-0 bg-black/20 pointer-events-none transition-opacity duration-300"
+        ></div>
       )}
+      
+      {timeUp && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
+          <div 
+            ref={timeUpRef}
+            className="relative bg-yellow-50 border-2 border-red-700 rounded-xl px-16 py-8 shadow-[4px_4px_0_rgba(0,0,0,1)] text-red-700 flex flex-col space-y-6 md:space-y-8 items-center"
+          >
+            <h3 className="text-lg font-semibold">Time's Up!</h3>
+            <p className="text-center">Choose your next session:</p>
+            <div className="flex gap-3">
+              {options.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleNextOption(opt.value)}
+                  className={`${buttonBase} ${buttonActive}`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        )}
+        {/* Share  */}
+        <div className="absolute bottom-2 right-2 flex items-center text-xs">
+          <button
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(window.location.href);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+              } catch {
+                alert("Failed to copy link. Please try manually.");
+              }
+            }}
+            className="relative px-2 py-1 border border-red-700 rounded-md hover:bg-red-700 hover:text-yellow-50 transition-all duration-200"
+          >
+            Share
+            {copied && (
+              <span className="absolute -top-6 right-1 text-xs text-red-700">
+                Copied!
+              </span>
+            )}
+          </button>
+        </div>
       </div> 
     </>
   );
