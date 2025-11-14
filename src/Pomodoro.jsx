@@ -3,14 +3,14 @@ import Drawer from "./Drawer";
 
 export default function Pomodoro() {
 
-  // const POMODORO = 25 * 60;
-  // const SHORT_BREAK = 5 * 60;
-  // const LONG_BREAK = 15 * 60;
+  const POMODORO = 25 * 60;
+  const SHORT_BREAK = 5 * 60;
+  const LONG_BREAK = 15 * 60;
 
   // For development & testing 
-  const POMODORO = 0.3 * 60;
-  const SHORT_BREAK = 0.1 * 60;
-  const LONG_BREAK = 0.2 * 60;
+  // const POMODORO = 0.3 * 60;
+  // const SHORT_BREAK = 0.1 * 60;
+  // const LONG_BREAK = 0.2 * 60;
 
   const [mode, setMode] = useState("pomodoro");
   const [custom, setCustom] = useState(1);
@@ -26,6 +26,7 @@ export default function Pomodoro() {
   const [finishedMode, setFinishedMode] = useState(null);
 
   const menuRef = useRef(null);
+  const customRef = useRef(null);
   const timeUpRef = useRef(null);
 
   useEffect(() => {
@@ -66,9 +67,7 @@ export default function Pomodoro() {
       setRunning(false);
       setTimeUp(true);
       setFinishedMode(mode);
-      // Change tab title
       document.title = "Time's up!";
-      // Browser notification
       if ("Notification" in window) {
         if (Notification.permission === "granted") {
           new Notification("Time's up!", {
@@ -86,16 +85,24 @@ export default function Pomodoro() {
   }, [secondsLeft, hasStarted, timeUp]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutsideAll = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
       }
+      if (showCustomModal && customRef.current && !customRef.current.contains(event.target)) {
+        setShowCustomModal(false);
+      }
+      if (timeUp && timeUpRef.current && !timeUpRef.current.contains(event.target)) {
+        setTimeUp(false);
+      }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+
+    document.addEventListener("mousedown", handleClickOutsideAll);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutsideAll);
     };
-  }, []);
+  }, [showCustomModal, timeUp]);
+
 
   const setTimerMode = (newMode, newCustom = null, autoStart = false) => {
     setRunning(false);
@@ -125,13 +132,29 @@ export default function Pomodoro() {
     setRunning(r => !r);
   };
 
+  const reset = () => {
+    setTimerMode(mode, null, false); 
+  };
+
   const changeMode = (newMode) => {
     setTimerMode(newMode, null, false); 
   };
 
-  const reset = () => {
-    setTimerMode(mode, null, false); 
-  };
+  let options = [];
+    if (finishedMode === "pomodoro") {
+      options = [
+        { label: "Short Break", value: "short" },
+        { label: "Long Break", value: "long" },
+      ];
+    } else if (finishedMode === "short" || finishedMode === "long") {
+      options = [{ label: "Pomodoro", value: "pomodoro" }];
+    } else { 
+      options = [
+        { label: "Pomodoro", value: "pomodoro" },
+        { label: "Short Break", value: "short" },
+        { label: "Long Break", value: "long" },
+      ];
+    }
 
   const openCustomModal = () => {
     setPendingCustom(custom);
@@ -224,7 +247,7 @@ export default function Pomodoro() {
 
   return (
     <>
-    <div className="min-h-screen bg-yellow-50 text-red-700">
+    <div className="h-screen bg-yellow-50 text-red-700">
       <div className="flex flex-col items-center gap-8 p-6">
         <div className="flex flex-col md:flex-row justify-between w-screen px-4">
           <div className="flex-col">
@@ -260,7 +283,10 @@ export default function Pomodoro() {
               </button>
               {showCustomModal && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
-                  <div className="bg-yellow-50 border-2 border-red-700 rounded-xl px-16 py-8 shadow-[4px_4px_0_rgba(0,0,0,1)] text-red-700 flex flex-col space-y-6 md:space-y-8 items-center">
+                  <div
+                    ref={customRef}
+                    className="bg-yellow-50 border-2 border-red-700 rounded-xl px-16 py-8 shadow-[4px_4px_0_rgba(0,0,0,1)] text-red-700 flex flex-col space-y-6 md:space-y-8 items-center"
+                  >
                     <h3 className="text-lg md:text-xl font-bold uppercase tracking-wider">
                       Set Custom Timer
                     </h3>
@@ -318,7 +344,7 @@ export default function Pomodoro() {
           />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="mt-12 text-center">
-              <div className="text-4xl md:text-6xl font-medium text-white">
+              <div className="text-4xl md:text-6xl font-medium text-white select-none">
                 {minutes}:{seconds}
               </div>
             </div>
@@ -351,7 +377,6 @@ export default function Pomodoro() {
           </button>
         </div>
       </div>
-    </div> 
     
     {hasStarted && !running && (
       <div
@@ -359,44 +384,29 @@ export default function Pomodoro() {
       ></div>
     )}
     
-    {timeUp && (() => {
-      let options = [];
-      if (finishedMode === "pomodoro") {
-        options = [
-          { label: "Short Break", value: "short" },
-          { label: "Long Break", value: "long" },
-        ];
-      } else if (finishedMode === "short" || finishedMode === "long") {
-        options = [{ label: "Pomodoro", value: "pomodoro" }];
-      } else { 
-        options = [
-          { label: "Pomodoro", value: "pomodoro" },
-          { label: "Short Break", value: "short" },
-          { label: "Long Break", value: "long" },
-        ];
-      }
-      return (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
-          <div 
-            ref={timeUpRef}
-            className="bg-white rounded px-12 py-6 shadow-xl text-red-700 flex flex-col space-y-6 md:space-y-8 items-center">
-            <h3 className="text-lg font-semibold">Time's Up!</h3>
-            <p className="text-center">Choose your next session:</p>
-            <div className="flex gap-3">
-              {options.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => handleNextOption(opt.value)}
-                  className={`${buttonBase} ${buttonActive}`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
+    {timeUp && (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
+        <div 
+          ref={timeUpRef}
+          className="relative bg-yellow-50 border-2 border-red-700 rounded-xl px-16 py-8 shadow-[4px_4px_0_rgba(0,0,0,1)] text-red-700 flex flex-col space-y-6 md:space-y-8 items-center"
+        >
+          <h3 className="text-lg font-semibold">Time's Up!</h3>
+          <p className="text-center">Choose your next session:</p>
+          <div className="flex gap-3">
+            {options.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => handleNextOption(opt.value)}
+                className={`${buttonBase} ${buttonActive}`}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
         </div>
-      );
-    })()}
+      </div>
+      )}
+      </div> 
     </>
   );
 }
