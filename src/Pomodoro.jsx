@@ -3,9 +3,13 @@ import Drawer from "./Drawer";
 
 export default function Pomodoro() {
 
-  const POMODORO = 25 * 60;
-  const SHORT_BREAK = 5 * 60;
-  const LONG_BREAK = 15 * 60;
+  // const POMODORO = 25 * 60;
+  // const SHORT_BREAK = 5 * 60;
+  // const LONG_BREAK = 15 * 60;
+
+  const POMODORO = 0.3 * 60;
+  const SHORT_BREAK = 0.1 * 60;
+  const LONG_BREAK = 0.2 * 60;
 
   const [mode, setMode] = useState("pomodoro");
   const [custom, setCustom] = useState(1);
@@ -156,7 +160,7 @@ export default function Pomodoro() {
 
   useEffect(() => {
     const handleShortcut = (e) => {
-      if (showCustomModal) return; 
+      if (menuOpen || showCustomModal) return;
       switch (e.key) {
         case " ": 
           e.preventDefault(); 
@@ -186,10 +190,8 @@ export default function Pomodoro() {
       }
     };
     document.addEventListener("keydown", handleShortcut);
-    return () => {
-      document.removeEventListener("keydown", handleShortcut);
-    };
-  }, [showCustomModal, toggle, reset, changeMode]);
+    return () => document.removeEventListener("keydown", handleShortcut);
+  }, [menuOpen, showCustomModal, toggle, reset, changeMode]);
 
   const totalTime =
     mode === "pomodoro"

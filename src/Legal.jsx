@@ -15,7 +15,8 @@ export default function Legal() {
                 All data is stored locally in your browser and is not shared with third parties.
                 </p>
                 <p>
-                The app uses browser notifications to alert you when a timer ends. Notifications require your explicit permission. You can allow or deny notifications through your browser settings. If you deny permission, timer alerts will only appear visually in the app.
+                Browser notifications may be used for timer alerts and require your permission. 
+                If disabled, alerts will be shown only within the app.
                 </p>
                 <p>
                 By using this app, you agree to these terms. 

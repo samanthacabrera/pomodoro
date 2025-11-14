@@ -172,7 +172,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, timeUp}) {
                 key={card.id}
                 onClick={() => index !== 0 && cycleCards()}
                 className={`absolute w-full h-96 p-4 rounded-md border-2 border-dotted border-stone-700 bg-yellow-50 shadow-[4px_4px_0_0_#00000030] overflow-hidden transition-transform duration-300 ${
-                  index === 0 ? "cursor-default" : "cursor-pointer"
+                  index === 0 ? "cursor-default" : "cursor-pointer select-none"
                 }`}
                 style={{
                   top: `calc(50% - ${
