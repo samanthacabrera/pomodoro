@@ -97,6 +97,23 @@ export default function Pomodoro() {
     };
   }, []);
 
+  const setTimerMode = (newMode, newCustom = null, autoStart = false) => {
+    setRunning(false);
+    setHasStarted(autoStart);  
+    setTimeUp(false);
+    setMode(newMode);
+
+    let newDuration;
+    if (newMode === "pomodoro") newDuration = POMODORO;
+    else if (newMode === "short") newDuration = SHORT_BREAK;
+    else if (newMode === "long") newDuration = LONG_BREAK;
+    else newDuration = (newCustom || custom) * 60; 
+
+    setDuration(newDuration);
+    setSecondsLeft(newDuration);
+    setStartTime(autoStart ? Date.now() : null); 
+  };
+
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const seconds = String(secondsLeft % 60).padStart(2, "0");
 
@@ -108,37 +125,12 @@ export default function Pomodoro() {
     setRunning(r => !r);
   };
 
-  const reset = () => {
-    setRunning(false);
-    setHasStarted(false);
-    setTimeUp(false);
-
-    let newDuration;
-    if (mode === "pomodoro") newDuration = POMODORO;
-    else if (mode === "short") newDuration = SHORT_BREAK;
-    else if (mode === "long") newDuration = LONG_BREAK;
-    else newDuration = custom * 60;
-
-    setDuration(newDuration);
-    setSecondsLeft(newDuration);
-    setStartTime(null);
+  const changeMode = (newMode) => {
+    setTimerMode(newMode, null, false); 
   };
 
-  const changeMode = (newMode) => {
-    setRunning(false);
-    setHasStarted(false);
-    setTimeUp(false);
-    setMode(newMode);
-
-    let newDuration;
-    if (newMode === "pomodoro") newDuration = POMODORO;
-    else if (newMode === "short") newDuration = SHORT_BREAK;
-    else if (newMode === "long") newDuration = LONG_BREAK;
-    else newDuration = custom * 60;
-
-    setDuration(newDuration);
-    setSecondsLeft(newDuration);
-    setStartTime(null);
+  const reset = () => {
+    setTimerMode(mode, null, false); 
   };
 
   const openCustomModal = () => {
@@ -193,16 +185,7 @@ export default function Pomodoro() {
     return () => document.removeEventListener("keydown", handleShortcut);
   }, [menuOpen, showCustomModal, toggle, reset, changeMode]);
 
-  const totalTime =
-    mode === "pomodoro"
-    ? POMODORO
-    : mode === "short"
-    ? SHORT_BREAK
-    : mode === "long"
-    ? LONG_BREAK
-    : custom * 60;
-
-  const progress = secondsLeft / totalTime;
+  const progress = secondsLeft / duration;
 
   const getTomatoColor = (progress) => {
   const stages = [
@@ -302,12 +285,8 @@ export default function Pomodoro() {
                       <button
                         onClick={() => {
                           const finalValue = pendingCustom || 1;
-                          setCustom(finalValue);         
-                          setDuration(finalValue * 60);   
-                          setSecondsLeft(finalValue * 60);
-                          setStartTime(Date.now());        
-                          setRunning(true);               
-                          setHasStarted(true);             
+                          setCustom(finalValue);    
+                          setTimerMode("custom", finalValue, false); 
                           setShowCustomModal(false);  
                         }}
                         className={`${buttonBase} ${buttonActive}`}
