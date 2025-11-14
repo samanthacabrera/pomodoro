@@ -51,7 +51,8 @@ function TodoList({ tasks, setTasks, newTask, setNewTask }) {
   );
 }
 
-function Tracker({ counts, resetTracker }) {
+function Tracker({ counts, customMinutes, resetTracker }) {
+  const totalMinutes = counts.pomodoro * 25 + counts.short * 5 + counts.long * 15 + customMinutes;
   return (
     <div className="flex flex-col space-y-4">
       <div>
@@ -66,15 +67,26 @@ function Tracker({ counts, resetTracker }) {
         <p className="font-bold">Long Breaks</p>
         <p>{counts.long}</p>
       </div>
+      <div>
+        <p className="font-bold">Total Minutes</p>
+        <p>{totalMinutes}</p>
+      </div>
       <button onClick={resetTracker} className="border border-red-700 rounded p-1 w-fit hover:bg-red-700 hover:text-yellow-50 transition-all">Reset Tracker</button>
     </div>
   );
 }
 
-export default function Drawer({ menuOpen, setMenuOpen, mode, timeUp}) {
-  const [tasks, setTasks] = useState([]);
+export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
+  const [tasks, setTasks] = useState(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
+  const [counts, setCounts] = useState(() => {
+    const savedCounts = localStorage.getItem("counts");
+    return savedCounts ? JSON.parse(savedCounts) : { pomodoro: 0, short: 0, long: 0 };
+  });
+  const customMinutes = counts.custom ? counts.custom.reduce((sum, val) => sum + val, 0) : 0;
   const [newTask, setNewTask] = useState("");
-  const [counts, setCounts] = useState({ pomodoro: 0, short: 0, long: 0 });
   const [cards, setCards] = useState([
     {
       id: "tracker",
@@ -90,10 +102,10 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, timeUp}) {
       id: "howTo",
       title: "How to Use",
       content: (
-        <p>
-          The Pomodoro Technique helps you focus by splitting work into 25-minute
-          focus sessions with short breaks. After four, take a long break.
-        </p>
+        <div className="space-y-4">
+        <p>The Pomodoro Technique is a time management method designed to improve focus and productivity. It breaks work into 25-minute “Pomodoro” sessions, each followed by a short 5-minute break. After completing four Pomodoros, take a longer 15-minute break to recharge.</p>
+        <p>The technique was developed by Francesco Cirillo. He named it “Pomodoro” (Italian for “tomato”) after the tomato-shaped kitchen timer he used to track his work sessions.</p>      
+        </div>
       ),
     },
     {
@@ -115,13 +127,21 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, timeUp}) {
   const menuRef = useRef(null);
 
   useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem("counts", JSON.stringify(counts));
+  }, [tasks, counts]);
+
+  useEffect(() => {
     if (!timeUp) return;
 
-    setCounts((prev) => ({
-      ...prev,
-      [mode]: prev[mode] + 1,
-    }));
-  }, [timeUp, mode]);
+    setCounts((prev) => {
+      if (mode === "custom") {
+        const newCustom = prev.custom ? [...prev.custom, custom] : [custom];
+        return { ...prev, custom: newCustom };
+      }
+      return { ...prev, [mode]: prev[mode] + 1 };
+    });
+  }, [timeUp, mode, custom]);
 
   const resetTracker = () => setCounts({ pomodoro: 0, short: 0, long: 0 });
 
@@ -190,14 +210,9 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, timeUp}) {
                 </h3>
                 <div className="text-stone-700 text-xs leading-relaxed tracking-wide h-full overflow-y-auto pr-2">
                   {card.id === "todo" ? (
-                    <TodoList
-                      tasks={tasks}
-                      setTasks={setTasks}
-                      newTask={newTask}
-                      setNewTask={setNewTask}
-                    />
+                    <TodoList tasks={tasks} setTasks={setTasks} newTask={newTask} setNewTask={setNewTask} />
                   ) : card.id === "tracker" ? (
-                    <Tracker counts={counts} resetTracker={resetTracker} />
+                    <Tracker counts={counts} customMinutes={customMinutes} resetTracker={resetTracker} />
                   ) : (
                     card.content
                   )}

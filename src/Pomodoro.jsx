@@ -3,13 +3,14 @@ import Drawer from "./Drawer";
 
 export default function Pomodoro() {
 
-  // const POMODORO = 25 * 60;
-  // const SHORT_BREAK = 5 * 60;
-  // const LONG_BREAK = 15 * 60;
+  const POMODORO = 25 * 60;
+  const SHORT_BREAK = 5 * 60;
+  const LONG_BREAK = 15 * 60;
 
-  const POMODORO = 0.3 * 60;
-  const SHORT_BREAK = 0.1 * 60;
-  const LONG_BREAK = 0.2 * 60;
+  // For development & testing 
+  // const POMODORO = 0.3 * 60;
+  // const SHORT_BREAK = 0.1 * 60;
+  // const LONG_BREAK = 0.2 * 60;
 
   const [mode, setMode] = useState("pomodoro");
   const [custom, setCustom] = useState(1);
@@ -325,7 +326,7 @@ export default function Pomodoro() {
             </div>
           </div>
 
-          <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} mode={mode} timeUp={timeUp} />
+          <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} mode={mode} custom={custom} timeUp={timeUp} />
         
         {/* Timer */}
         <div className="relative w-96 h-96 md:w-[45vw] md:h-[55vh] flex items-center justify-center">
