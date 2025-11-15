@@ -24,7 +24,6 @@ export default function Pomodoro() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
   const [finishedMode, setFinishedMode] = useState(null);
-  const [copied, setCopied] = useState(false);
 
   const menuRef = useRef(null);
   const customRef = useRef(null);
@@ -253,7 +252,7 @@ export default function Pomodoro() {
         <div className="flex flex-col md:flex-row justify-between w-screen px-4">
           <div className="flex-col">
             <h1 className="text-4xl uppercase tracking-widest font-bold">Pomodoro</h1>
-            <h6 className="text-xs font-medium w-fit border-b border-transparent hover:border-b hover:border-dotted hover:border-red-700 transition">Made by <a href="https://github.com/samanthacabrera">Sam Cabrera</a></h6>
+            <h6 className="text-xs w-fit border-b border-transparent hover:border-b hover:border-dotted hover:border-red-700 transition">Developed by Francesco Cirillo</h6>
           </div>
           
             {/* Modes  */}
@@ -407,28 +406,6 @@ export default function Pomodoro() {
           </div>
         </div>
         )}
-        {/* Share  */}
-        <div className="absolute bottom-2 right-2 flex items-center text-xs">
-          <button
-            onClick={async () => {
-              try {
-                await navigator.clipboard.writeText(window.location.href);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 1500);
-              } catch {
-                alert("Failed to copy link. Please try manually.");
-              }
-            }}
-            className="relative px-2 py-1 border border-red-700 rounded-md hover:bg-red-700 hover:text-yellow-50 transition-all duration-200"
-          >
-            Share
-            {copied && (
-              <span className="absolute -top-6 right-1 text-xs text-red-700">
-                Copied!
-              </span>
-            )}
-          </button>
-        </div>
       </div> 
     </>
   );

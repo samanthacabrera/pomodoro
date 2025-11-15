@@ -77,6 +77,7 @@ function Tracker({ counts, customMinutes, resetTracker }) {
 }
 
 export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
+  const [copied, setCopied] = useState(false);
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem("tasks");
     return savedTasks ? JSON.parse(savedTasks) : [];
@@ -220,14 +221,38 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
               </div>
             ))}
           </div>
-
-          <Link
-            to="/pomodoro/legal"
-            onClick={() => setMenuOpen(false)}
-            className="absolute bottom-2 right-2 text-xs text-yellow-50/50 hover:text-yellow-50/70 transition"
-          >
-            Legal & Privacy
-          </Link>
+          {/* Footer */}
+          <div className="flex justify-center space-x-4 text-xs text-yellow-50/50">
+            <a href="https://github.com/samanthacabrera" className="hover:text-yellow-50/70 transition">
+              Made by Sam Cabrera
+            </a>
+            <button
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(window.location.href);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                } catch {
+                  alert("Failed to copy link. Please try manually.");
+                }
+              }}
+              className="relative hover:text-yellow-50/70 transition"
+            >
+              Share
+              {copied && (
+                <span className="absolute -top-6 right-1 text-xs text-red-700">
+                  Copied!
+                </span>
+              )}
+            </button>
+            <Link
+              to="/pomodoro/legal"
+              onClick={() => setMenuOpen(false)}
+              className="hover:text-yellow-50/70 transition"
+            >
+              Legal & Privacy
+            </Link>
+          </div>
         </div>
       )}
     </>
