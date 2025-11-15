@@ -103,7 +103,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
       id: "howTo",
       title: "How to Use",
       content: (
-        <div className="space-y-4">
+        <div className="space-y-2">
         <p>The Pomodoro Technique is a time management method designed to improve focus and productivity. It breaks work into 25-minute “Pomodoro” sessions, each followed by a short 5-minute break. After completing four Pomodoros, take a longer 15-minute break to recharge.</p>
         <p>The technique was developed by Francesco Cirillo. He named it “Pomodoro” (Italian for “tomato”) after the tomato-shaped kitchen timer he used to track his work sessions.</p>      
         </div>
@@ -113,7 +113,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
       id: "shortcuts",
       title: "Keyboard Shortcuts",
       content: (
-        <ul className="flex flex-col space-y-1 text-xs">
+        <ul className="flex flex-col space-y-1">
           <li><strong>Space</strong> - Start / Pause</li>
           <li><strong>r</strong> - Reset</li>
           <li><strong>p</strong> - Pomodoro</li>
@@ -222,10 +222,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
             ))}
           </div>
           {/* Footer */}
-          <div className="flex justify-center space-x-4 text-xs text-yellow-50/50">
-            <a href="https://github.com/samanthacabrera" className="hover:text-yellow-50/70 transition">
-              Made by Sam Cabrera
-            </a>
+          <div className=" flex flex-col xl:flex-row items-center justify-center space-x-0 xl:space-x-2 text-xs text-yellow-50/50">
             <button
               onClick={async () => {
                 try {
@@ -240,11 +237,12 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
             >
               Share
               {copied && (
-                <span className="absolute -top-6 right-1 text-xs text-red-700">
-                  Copied!
+                <span className="absolute -top-6 -left-1">
+                  Copied! 
                 </span>
               )}
             </button>
+            <span className="hidden xl:inline">|</span>
             <Link
               to="/pomodoro/legal"
               onClick={() => setMenuOpen(false)}
@@ -252,6 +250,10 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
             >
               Legal & Privacy
             </Link>
+            <span className="hidden xl:inline">|</span>
+            <a href="https://github.com/samanthacabrera" className="hover:text-yellow-50/70 transition">
+              Made by Sam Cabrera
+            </a>
           </div>
         </div>
       )}

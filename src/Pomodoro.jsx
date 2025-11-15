@@ -252,7 +252,7 @@ export default function Pomodoro() {
         <div className="flex flex-col md:flex-row justify-between w-screen px-4">
           <div className="flex-col">
             <h1 className="text-4xl uppercase tracking-widest font-bold">Pomodoro</h1>
-            <h6 className="text-xs w-fit border-b border-transparent hover:border-b hover:border-dotted hover:border-red-700 transition">Developed by Francesco Cirillo</h6>
+            <a href="https://www.pomodorotechnique.com/" className="text-sm w-fit border-b border-transparent hover:border-b hover:border-dotted hover:border-red-700 transition">Inspired by Francesco Cirillo</a>
           </div>
           
             {/* Modes  */}
