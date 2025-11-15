@@ -56,7 +56,7 @@ function Tracker({ counts, customMinutes, resetTracker }) {
   return (
     <div className="flex flex-col space-y-4">
       <div>
-        <p className="font-bold">Pomodoros</p>
+        <p className="font-bold">Focus Sessions</p>
         <p>{counts.pomodoro}</p>
       </div>
       <div>
@@ -104,7 +104,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
       title: "How to Use",
       content: (
         <div className="space-y-2">
-        <p>The Pomodoro Technique is a time management method designed to improve focus and productivity. It breaks work into 25-minute “Pomodoro” sessions, each followed by a short 5-minute break. After completing four Pomodoros, take a longer 15-minute break to recharge.</p>
+        <p>The Pomodoro® Technique is a time management method designed to improve focus and productivity. It breaks work into 25-minute “Pomodoro” sessions, each followed by a short 5-minute break. After completing four Pomodoros, take a longer 15-minute break to recharge.</p>
         <p>The technique was developed by Francesco Cirillo. He named it “Pomodoro” (Italian for “tomato”) after the tomato-shaped kitchen timer he used to track his work sessions.</p>      
         </div>
       ),
@@ -251,7 +251,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
               Legal & Privacy
             </Link>
             <span className="hidden xl:inline">|</span>
-            <a href="https://github.com/samanthacabrera" className="hover:text-yellow-50/70 transition">
+            <a href="https://github.com/samanthacabrera" target="_blank" rel="noopener noreferrer"className="hover:text-yellow-50/70 transition">
               Made by Sam Cabrera
             </a>
           </div>

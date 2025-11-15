@@ -241,18 +241,18 @@ export default function Pomodoro() {
     setHasStarted(false);
   };
   
-  const buttonBase = `px-3 py-2 md:px-6 md:py-3 rounded-2xl font-bold text-xs md:text-base border-2 border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
+  const buttonBase = `px-3 py-2 md:px-6 md:py-3 h-12 md:h-16 rounded-2xl font-bold text-xs md:text-base border-2 border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
   const buttonActive = `bg-red-700 text-white hover:bg-red-600`;
   const buttonInactive = `bg-stone-50 text-red-700 hover:text-red-600`;
 
   return (
     <>
-    <div className="h-screen bg-yellow-50 text-red-700">
+    <div className="h-screen w-screen overflow-hidden bg-yellow-50 text-red-700">
       <div className="flex flex-col items-center gap-8 p-6">
         <div className="flex flex-col md:flex-row justify-between w-screen px-4">
           <div className="flex-col">
-            <h1 className="text-4xl uppercase tracking-widest font-bold">Pomodoro</h1>
-            <a href="https://www.pomodorotechnique.com/" className="text-sm w-fit border-b border-transparent hover:border-b hover:border-dotted hover:border-red-700 transition">Inspired by Francesco Cirillo</a>
+            <h1 className="text-4xl md:text-6xl uppercase tracking-widest font-bold -mb-2">Tomate</h1>
+            <a href="https://www.pomodorotechnique.com/" target="_blank" rel="noopener noreferrer" className="ml-0 md:ml-2 text-sm font-medium w-fit border-b border-transparent hover:border-b hover:border-dotted hover:border-red-700 transition transform">Inspired by The Pomodoro® Technique</a>
           </div>
           
             {/* Modes  */}
@@ -261,7 +261,7 @@ export default function Pomodoro() {
                 onClick={() => changeMode("pomodoro")}
                 className={`${buttonBase} ${mode === "pomodoro" ? buttonActive : buttonInactive}`}
               >
-                Pomodoro
+                Focus Session
               </button>
               <button
                 onClick={() => changeMode("short")}
