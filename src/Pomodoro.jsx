@@ -70,9 +70,11 @@ export default function Pomodoro() {
       if ("Notification" in window) {
         if (Notification.permission === "granted") {
           new Notification("Time's up!", {
-            body: "Your session has ended",
-            icon: "/pomodoro/tomato.png",
-            silent: false,
+            icon: "/pomodoro/tomato.png", 
+            image: "/pomodoro/tomato.png", 
+            badge: "/pomodoro/tomato.png",
+            body: "Take a break or start your next session.",
+            requireInteraction: true,  
           });
         } else if (Notification.permission === "default") {
           Notification.requestPermission();
@@ -185,7 +187,7 @@ export default function Pomodoro() {
   useEffect(() => {
     const handleShortcut = (e) => {
     const tag = e.target.tagName;
-    if (tag === "INPUT" || tag === "TEXTAREA" || isEditable) return;
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
     if (menuOpen || showCustomModal) return;
       switch (e.key) {
         case " ": 
@@ -196,8 +198,8 @@ export default function Pomodoro() {
         case "r":
           reset();
           break;
-        case "P":
-        case "p":
+        case "F":
+        case "f":
           changeMode("pomodoro");
           break;
         case "S":
@@ -355,7 +357,7 @@ export default function Pomodoro() {
               value={focusTask}
               onChange={(e) => setFocusTask(e.target.value)}
               placeholder=""
-              className="w-full text-center bg-yellow-50 border-b-2 border-dotted border-red-700 px-2 text-black/90 font-medium text-base placeholder-black/50 focus:outline-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 caret-red-700"
+              className="w-full text-center bg-yellow-50 border-b-2 border-dotted border-red-700 px-2 text-black/90 font-medium text-base placeholder-black/50 focus:outline-none hover:translate-y-0.5 transition-all duration-150 caret-red-700"
             />
           </div>
  

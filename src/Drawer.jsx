@@ -115,7 +115,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
         <ul className="flex flex-col space-y-1">
           <li><strong>Space</strong> - Start / Pause</li>
           <li><strong>r</strong> - Reset</li>
-          <li><strong>p</strong> - Pomodoro</li>
+          <li><strong>f</strong> - Focus Session</li>
           <li><strong>s</strong> - Short Break</li>
           <li><strong>l</strong> - Long Break</li>
           <li><strong>c</strong> - Custom Timer</li>
