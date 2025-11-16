@@ -279,7 +279,7 @@ export default function Pomodoro() {
                 onClick={openCustomModal}
                 className={`${buttonBase} ${mode === "custom" ? buttonActive : buttonInactive}`}
               >
-                Custom
+                Custom Timer
               </button>
               {showCustomModal && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">

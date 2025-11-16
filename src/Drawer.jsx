@@ -104,7 +104,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
       title: "How to Use",
       content: (
         <div className="space-y-2">
-        <p>The Pomodoro® Technique is a time management method designed to improve focus and productivity. It breaks work into 25-minute “Pomodoro” sessions, each followed by a short 5-minute break. After completing four Pomodoros, take a longer 15-minute break to recharge.</p>
+        <p>The Pomodoro® Technique is a time management method. It breaks work into 25-minute “Pomodoro” sessions, each followed by a short 5-minute break. After completing four Pomodoros®, take a longer 15-minute break to recharge.</p>
         <p>The technique was developed by Francesco Cirillo. He named it “Pomodoro” (Italian for “tomato”) after the tomato-shaped kitchen timer he used to track his work sessions.</p>      
         </div>
       ),
