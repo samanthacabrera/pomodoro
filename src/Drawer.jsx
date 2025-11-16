@@ -77,7 +77,6 @@ function Tracker({ counts, customMinutes, resetTracker }) {
 }
 
 export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
-  const [copied, setCopied] = useState(false);
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem("tasks");
     return savedTasks ? JSON.parse(savedTasks) : [];
@@ -104,7 +103,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
       title: "How to Use",
       content: (
         <div className="space-y-2">
-        <p>The Pomodoro® Technique is a time management method. It breaks work into 25-minute “Pomodoro” sessions, each followed by a short 5-minute break. After completing four Pomodoros®, take a longer 15-minute break to recharge.</p>
+        <p>The Pomodoro Technique® is a time management method. It breaks work into 25-minute focus sessions, each followed by a short 5-minute break. After completing four focus sessions, take a longer 15-minute break to recharge.</p>
         <p>The technique was developed by Francesco Cirillo. He named it “Pomodoro” (Italian for “tomato”) after the tomato-shaped kitchen timer he used to track his work sessions.</p>      
         </div>
       ),
@@ -223,26 +222,6 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
           </div>
           {/* Footer */}
           <div className=" flex flex-col xl:flex-row items-center justify-center space-x-0 xl:space-x-2 text-xs text-yellow-50/50">
-            <button
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(window.location.href);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 1500);
-                } catch {
-                  alert("Failed to copy link. Please try manually.");
-                }
-              }}
-              className="relative hover:text-yellow-50/70 transition"
-            >
-              Share
-              {copied && (
-                <span className="absolute -top-6 -left-1">
-                  Copied! 
-                </span>
-              )}
-            </button>
-            <span className="hidden xl:inline">|</span>
             <Link
               to="/pomodoro/legal"
               onClick={() => setMenuOpen(false)}

@@ -24,6 +24,8 @@ export default function Pomodoro() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
   const [finishedMode, setFinishedMode] = useState(null);
+  const [focusTask, setFocusTask] = useState("");
+
 
   const menuRef = useRef(null);
   const customRef = useRef(null);
@@ -80,7 +82,7 @@ export default function Pomodoro() {
         }
       }
     } else if (!timeUp) {
-      document.title = "Pomodoro";
+      document.title = "Tomate";
     }
   }, [secondsLeft, hasStarted, timeUp]);
 
@@ -175,7 +177,9 @@ export default function Pomodoro() {
 
   useEffect(() => {
     const handleShortcut = (e) => {
-      if (menuOpen || showCustomModal) return;
+    const tag = e.target.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || isEditable) return;
+    if (menuOpen || showCustomModal) return;
       switch (e.key) {
         case " ": 
           e.preventDefault(); 
@@ -333,7 +337,21 @@ export default function Pomodoro() {
           </div>
 
           <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} mode={mode} custom={custom} timeUp={timeUp} />
-        
+
+          {/* Main Focus */}
+          <div className="w-full max-w-sm flex flex-col items-center gap-2">
+            <label className="text-red-700 text-sm font-medium tracking-wide select-none text-center">
+              I want to focus on...
+            </label>
+            <input
+              type="text"
+              value={focusTask}
+              onChange={(e) => setFocusTask(e.target.value)}
+              placeholder=""
+              className="w-full text-center bg-yellow-50 border-b-2 border-dotted border-red-700 px-2 text-black/90 font-medium text-base placeholder-black/50 focus:outline-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all duration-150 caret-red-700"
+            />
+          </div>
+ 
           {/* Timer */}
           <div className="relative w-96 h-96 md:w-[45vw] md:h-[55vh] flex items-center justify-center">
             <img
