@@ -44,32 +44,29 @@ export default function Pomodoro() {
   }, []);
 
   useEffect(() => {
-    let frame;
-    const update = () => {
-      if (!running || !startTime) return;
+    if (!running || !startTime) return;
+
+    const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
       const remaining = Math.max(duration - elapsed, 0);
       setSecondsLeft(remaining);
-      if (remaining > 0) {
-        frame = requestAnimationFrame(update);
-      } else {
+
+      if (remaining <= 0) {
         setRunning(false);
         setTimeUp(true);
-        document.title = "Time's up!";
+        clearInterval(interval);
       }
-    };
-    if (running) {
-      frame = requestAnimationFrame(update);
-    }
-    return () => cancelAnimationFrame(frame);
+    }, 500); 
+
+    return () => clearInterval(interval);
   }, [running, startTime, duration]);
+
 
   useEffect(() => {
     if (secondsLeft === 0 && hasStarted) {
       setRunning(false);
       setTimeUp(true);
       setFinishedMode(mode);
-      document.title = "Time's up!";
       if ("Notification" in window) {
         if (Notification.permission === "granted") {
           new Notification("Time's up!", {
@@ -81,8 +78,6 @@ export default function Pomodoro() {
           Notification.requestPermission();
         }
       }
-    } else if (!timeUp) {
-      document.title = "Tomate";
     }
   }, [secondsLeft, hasStarted, timeUp]);
 
@@ -125,6 +120,18 @@ export default function Pomodoro() {
 
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const seconds = String(secondsLeft % 60).padStart(2, "0");
+
+  useEffect(() => {
+    if (!hasStarted) {
+      document.title = "Tomate"; 
+    } else if (timeUp) {
+      document.title = "Time's up!"; 
+    } else {
+      const formattedMinutes = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
+      const formattedSeconds = String(secondsLeft % 60).padStart(2, "0");
+      document.title = `${formattedMinutes}:${formattedSeconds}`; 
+    }
+  }, [secondsLeft, hasStarted, timeUp]);
 
   const toggle = () => {
     if (!running) {
@@ -245,7 +252,7 @@ export default function Pomodoro() {
     setHasStarted(false);
   };
   
-  const buttonBase = `px-3 py-2 md:px-6 md:py-3 h-12 md:h-16 rounded-2xl font-bold text-xs md:text-base border-2 border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
+  const buttonBase = `flex items-center justify-center w-32 md:w-36 h-8 md:h-12 rounded-2xl font-bold text-xs md:text-base border-2 border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
   const buttonActive = `bg-red-700 text-white hover:bg-red-600`;
   const buttonInactive = `bg-stone-50 text-red-700 hover:text-red-600`;
 
@@ -255,12 +262,12 @@ export default function Pomodoro() {
       <div className="flex flex-col items-center gap-8 p-6">
         <div className="flex flex-col md:flex-row justify-between w-screen px-4">
           <div className="flex-col">
-            <h1 className="text-4xl md:text-6xl uppercase tracking-widest font-bold -mb-2">Tomate</h1>
+            <h1 className="text-4xl md:text-6xl uppercase tracking-wide font-bold -mb-2">Tomate</h1>
             <a href="https://www.pomodorotechnique.com/" target="_blank" rel="noopener noreferrer" className="ml-0 md:ml-2 text-sm font-medium w-fit border-b border-transparent hover:border-b hover:border-dotted hover:border-red-700 transition transform">Inspired by The Pomodoro® Technique</a>
           </div>
           
             {/* Modes  */}
-            <div className="flex gap-4 mt-4 md:mt-0 md:mr-12">
+            <div className="flex gap-4 mt-4 md:mt-1 md:mr-12">
               <button
                 onClick={() => changeMode("pomodoro")}
                 className={`${buttonBase} ${mode === "pomodoro" ? buttonActive : buttonInactive}`}
