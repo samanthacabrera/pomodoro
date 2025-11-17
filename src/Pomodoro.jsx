@@ -7,11 +7,6 @@ export default function Pomodoro() {
   const SHORT_BREAK = 5 * 60;
   const LONG_BREAK = 15 * 60;
 
-  // For development & testing 
-  // const POMODORO = 0.3 * 60;
-  // const SHORT_BREAK = 0.1 * 60;
-  // const LONG_BREAK = 0.2 * 60;
-
   const [mode, setMode] = useState("pomodoro");
   const [custom, setCustom] = useState(1);
   const [pendingCustom, setPendingCustom] = useState(custom);
@@ -254,7 +249,7 @@ export default function Pomodoro() {
     setHasStarted(false);
   };
   
-  const buttonBase = `flex items-center justify-center w-32 md:w-36 h-8 md:h-12 rounded-2xl font-bold text-xs md:text-base border-2 border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
+  const buttonBase = `flex items-center justify-center w-32 md:w-36 h-8 md:h-12 rounded-2xl font-bold text-xs md:text-base border border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none`;
   const buttonActive = `bg-red-700 text-white hover:bg-red-600`;
   const buttonInactive = `bg-stone-50 text-red-700 hover:text-red-600`;
 
@@ -270,28 +265,16 @@ export default function Pomodoro() {
           
             {/* Modes  */}
             <div className="flex gap-4 mt-4 md:mt-1 md:mr-12">
-              <button
-                onClick={() => changeMode("pomodoro")}
-                className={`${buttonBase} ${mode === "pomodoro" ? buttonActive : buttonInactive}`}
-              >
+              <button onClick={() => changeMode("pomodoro")} className={`${buttonBase} ${mode === "pomodoro" ? buttonActive : buttonInactive}`}>
                 Focus Session
               </button>
-              <button
-                onClick={() => changeMode("short")}
-                className={`${buttonBase} ${mode === "short" ? buttonActive : buttonInactive}`}
-              >
+              <button onClick={() => changeMode("short")} className={`${buttonBase} ${mode === "short" ? buttonActive : buttonInactive}`}>
                 Short Break
               </button>
-              <button
-                onClick={() => changeMode("long")}
-                className={`${buttonBase} ${mode === "long" ? buttonActive : buttonInactive}`}
-              >
+              <button onClick={() => changeMode("long")} className={`${buttonBase} ${mode === "long" ? buttonActive : buttonInactive}`}>
                 Long Break
               </button>
-              <button
-                onClick={openCustomModal}
-                className={`${buttonBase} ${mode === "custom" ? buttonActive : buttonInactive}`}
-              >
+              <button onClick={openCustomModal} className={`${buttonBase} ${mode === "custom" ? buttonActive : buttonInactive}`}>
                 Custom Timer
               </button>
               {showCustomModal && (
@@ -345,7 +328,7 @@ export default function Pomodoro() {
             </div>
           </div>
 
-          <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} mode={mode} custom={custom} timeUp={timeUp} />
+          <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} running={running} custom={custom} timeUp={timeUp} />
 
           {/* Main Focus */}
           <div className="w-full max-w-sm flex flex-col items-center gap-2">
@@ -363,12 +346,7 @@ export default function Pomodoro() {
  
           {/* Timer */}
           <div className="relative w-96 h-96 md:w-[45vw] md:h-[55vh] flex items-center justify-center">
-            <img
-              src="/pomodoro/tomato.png"
-              alt="tomato"
-              className="absolute inset-0 w-full h-full object-contain"
-              draggable="false"
-            />
+            <img src="/pomodoro/tomato.png" alt="tomato" className="absolute inset-0 w-full h-full object-contain" draggable="false"/>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="mt-12 text-center">
                 <div className="text-4xl md:text-6xl font-medium text-white select-none">
@@ -411,27 +389,28 @@ export default function Pomodoro() {
         ></div>
       )}
       
-      {timeUp && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
-          <div 
-            ref={timeUpRef}
-            className="relative bg-yellow-50 border-2 border-red-700 rounded-xl px-16 py-8 shadow-[4px_4px_0_rgba(0,0,0,1)] text-red-700 flex flex-col space-y-6 md:space-y-8 items-center"
-          >
-            <h3 className="text-lg font-semibold">Time's Up!</h3>
-            <p className="text-center">Choose your next session:</p>
-            <div className="flex gap-3">
-              {options.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => handleNextOption(opt.value)}
-                  className={`${buttonBase} ${buttonActive}`}
-                >
-                  {opt.label}
-                </button>
-              ))}
+        {timeUp && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
+            <div
+              ref={timeUpRef}
+              className="bg-yellow-50 border-2 border-red-700 rounded-xl px-16 py-8 shadow-[4px_4px_0_rgba(0,0,0,1)] text-red-700 flex flex-col space-y-6 md:space-y-8 items-center"
+            >
+              <h3 className="text-lg font-semibold">Time's Up!</h3>
+              <p className="text-center">Choose your next session:</p>
+
+              <div className="flex gap-3">
+                {options.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => handleNextOption(opt.value)}
+                    className={`${buttonBase} ${buttonActive}`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
         )}
       </div> 
     </>

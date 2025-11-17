@@ -8,10 +8,10 @@ export default function Legal() {
 
         <div className="max-w-2xl text-sm space-y-4">
             <p>
-                This app is an original, personal project based on a general time-management
+                This app is a personal project based on a general time-management
                 method, which is not protected by copyright and may be freely implemented.
-                “Pomodoro®” and “The Pomodoro Technique®” are trademarks of Francesco Cirillo 
-                and are used here only to reference the technique; this app is not affiliated with him.       
+                “Pomodoro®” is a trademark of Francesco Cirillo and is used only to reference the technique; 
+                this app is not affiliated with him.       
             </p>
 
             <p>

@@ -51,46 +51,54 @@ function TodoList({ tasks, setTasks, newTask, setNewTask }) {
   );
 }
 
-function Tracker({ counts, customMinutes, resetTracker }) {
-  const totalMinutes = counts.pomodoro * 25 + counts.short * 5 + counts.long * 15 + customMinutes;
+function Tracker({ resetTracker, history }) {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const todayMinutes = history
+    .filter((h) => h.ts >= startOfDay.getTime())
+    .reduce((sum, h) => sum + h.minutes, 0);
+
+  const allTimeMinutes = history.reduce((sum, h) => sum + h.minutes, 0);
+
   return (
     <div className="flex flex-col space-y-4">
       <div>
-        <p className="font-bold">Focus Sessions</p>
-        <p>{counts.pomodoro}</p>
+        <p className="font-bold">Today’s Total Time</p>
+        <p>{todayMinutes} min</p>
       </div>
+
       <div>
-        <p className="font-bold">Short Breaks</p>
-        <p>{counts.short}</p>
+        <p className="font-bold">All-Time Total Time</p>
+        <p>{allTimeMinutes} min</p>
       </div>
-      <div>
-        <p className="font-bold">Long Breaks</p>
-        <p>{counts.long}</p>
-      </div>
-      <div>
-        <p className="font-bold">Total Minutes</p>
-        <p>{totalMinutes}</p>
-      </div>
-      <button onClick={resetTracker} className="border border-red-700 rounded p-1 w-fit hover:bg-red-700 hover:text-yellow-50 transition-all">Reset Tracker</button>
+
+      <button
+        onClick={resetTracker}
+        className="border border-red-700 rounded p-1 w-fit hover:bg-red-700 hover:text-yellow-50 transition-all"
+      >
+        Reset Tracker
+      </button>
     </div>
   );
 }
 
-export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
+export default function Drawer({ menuOpen, setMenuOpen, running}) {
+  const [newTask, setNewTask] = useState("");
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem("tasks");
     return savedTasks ? JSON.parse(savedTasks) : [];
   });
-  const [counts, setCounts] = useState(() => {
-    const savedCounts = localStorage.getItem("counts");
-    return savedCounts ? JSON.parse(savedCounts) : { pomodoro: 0, short: 0, long: 0 };
+
+  const [history, setHistory] = useState(() => {
+    const saved = localStorage.getItem("history");
+    return saved ? JSON.parse(saved) : [];  
   });
-  const customMinutes = counts.custom ? counts.custom.reduce((sum, val) => sum + val, 0) : 0;
-  const [newTask, setNewTask] = useState("");
+
   const [cards, setCards] = useState([
     {
       id: "tracker",
-      title: "Session Tracker",
+      title: "Stats Tracker",
       content: null,
     },
     {
@@ -128,22 +136,30 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
-    localStorage.setItem("counts", JSON.stringify(counts));
-  }, [tasks, counts]);
+    localStorage.setItem("history", JSON.stringify(history));
+  }, [tasks, history]);
 
   useEffect(() => {
-    if (!timeUp) return;
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      setCards(prev => prev.filter(c => c.id !== "shortcuts"));
+    }
+  }, []);
 
-    setCounts((prev) => {
-      if (mode === "custom") {
-        const newCustom = prev.custom ? [...prev.custom, custom] : [custom];
-        return { ...prev, custom: newCustom };
-      }
-      return { ...prev, [mode]: prev[mode] + 1 };
-    });
-  }, [timeUp, mode, custom]);
+  useEffect(() => {
+    if (!running) return;
 
-  const resetTracker = () => setCounts({ pomodoro: 0, short: 0, long: 0 });
+    const interval = setInterval(() => {
+      setHistory(prev => [
+        ...prev,
+        { minutes: 1, ts: Date.now() }
+      ]);
+    }, 60_000);
+
+    return () => clearInterval(interval);
+  }, [running]);
+
+  const resetTracker = () => setHistory([]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -191,9 +207,9 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
               <div
                 key={card.id}
                 onClick={() => index !== 0 && cycleCards()}
-                className={`absolute w-full h-96 p-4 rounded-md border-2 border-dotted border-stone-700 bg-yellow-50 shadow-[4px_4px_0_0_#00000030] overflow-hidden transition-transform duration-300 ${
-                  index === 0 ? "cursor-default" : "cursor-pointer select-none"
-                }`}
+                className={`absolute w-full h-96 p-4 rounded-md border-2 border-dotted border-stone-700 bg-yellow-50 shadow-[4px_4px_0_0_#00000030] overflow-hidden transition-transform duration-300 
+                  ${index === 0 ? "cursor-default" : "cursor-pointer select-none"} 
+                `}
                 style={{
                   top: `calc(50% - ${
                     (cards.length * 100) / 2 + (cards.length - 1) * 20
@@ -212,7 +228,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
                   {card.id === "todo" ? (
                     <TodoList tasks={tasks} setTasks={setTasks} newTask={newTask} setNewTask={setNewTask} />
                   ) : card.id === "tracker" ? (
-                    <Tracker counts={counts} customMinutes={customMinutes} resetTracker={resetTracker} />
+                    <Tracker history={history} resetTracker={resetTracker} />
                   ) : (
                     card.content
                   )}
@@ -221,7 +237,7 @@ export default function Drawer({ menuOpen, setMenuOpen, mode, custom, timeUp}) {
             ))}
           </div>
           {/* Footer */}
-          <div className=" flex flex-col xl:flex-row items-center justify-center space-x-0 xl:space-x-2 text-xs text-yellow-50/50">
+          <div className="flex flex-col xl:flex-row items-center justify-center space-x-0 xl:space-x-2 space-y-1 xl:space-y-0 text-xs text-yellow-50/50">
             <Link
               to="/pomodoro/legal"
               onClick={() => setMenuOpen(false)}
