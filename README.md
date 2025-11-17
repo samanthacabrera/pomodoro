@@ -1,4 +1,4 @@
-# POMODORO
+# TOMATE
 
 A minimal timer web app that follows the classic Pomodoro Technique.
 

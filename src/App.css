@@ -7,3 +7,15 @@ html {
   padding: 0;
   margin: 0;
 }
+
+.button-base {
+  @apply flex items-center justify-center w-32 md:w-36 h-8 md:h-12 rounded-2xl font-bold text-xs md:text-base border border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none;
+}
+
+.button-active {
+  @apply bg-red-700 text-yellow-50 hover:bg-red-600;
+}
+
+.button-inactive {
+  @apply bg-stone-50 text-red-700 hover:text-red-600;
+}
