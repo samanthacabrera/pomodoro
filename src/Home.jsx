@@ -24,14 +24,12 @@ export default function Home() {
   const [focusTask, setFocusTask] = useState("");
   const [finishedMode, setFinishedMode] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showCustomModal, setShowCustomModal] = useState(false);
   const [custom, setCustom] = useState(1);
   const [pendingCustom, setPendingCustom] = useState(custom);
+  const [activeModal, setActiveModal] = useState(null); 
 
   const startTimeRef = useRef(null);
-  const timeUpRef = useRef(null);
   const menuRef = useRef(null);
-  const customRef = useRef(null);
 
   const progress = secondsLeft / duration;
 
@@ -79,15 +77,13 @@ export default function Home() {
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
-      if (showCustomModal && customRef.current && !customRef.current.contains(e.target)) setShowCustomModal(false);
-      if (timeUp && timeUpRef.current && !timeUpRef.current.contains(e.target)) setTimeUp(false);
-    };
+  };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showCustomModal, timeUp]);
+  }, []);
 
-  // --- Keyboard shortcuts ---
+  // Keyboard shortcuts
   const toggle = useCallback(() => {
     if (!running) setHasStarted(true);
     if (!startTimeRef.current) startTimeRef.current = Date.now() - (duration - secondsLeft) * 1000;
@@ -119,7 +115,7 @@ export default function Home() {
   useEffect(() => {
     const handleKey = (e) => {
       if (["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
-      if (menuOpen || showCustomModal) return;
+      if (menuOpen) return;
 
       switch (e.key.toLowerCase()) {
         case " ":
@@ -140,16 +136,16 @@ export default function Home() {
           break;
         case "c":
           changeMode("custom");
-          setShowCustomModal(true);
+          openModal("custom");
           break;
       }
     };
 
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [menuOpen, showCustomModal, toggle, reset, changeMode]);
+  }, [menuOpen, toggle, reset, changeMode]);
 
-  // --- Next option after timeUp ---
+  // Next option after timeUp
   const handleNextOption = (nextMode) => {
     changeMode(nextMode);
     setTimeUp(false);
@@ -160,18 +156,16 @@ export default function Home() {
   else if (finishedMode === "short" || finishedMode === "long") options = [{ label: "Pomodoro", value: "pomodoro" }];
   else options = [{ label: "Pomodoro", value: "pomodoro" }, { label: "Short Break", value: "short" }, { label: "Long Break", value: "long" }];
 
-  const openCustomModal = () => {
-    setPendingCustom(custom);
-    setShowCustomModal(true);
-    setMode("custom");
-  };
+  // Modal helper funcs
+  const openModal = (modalName) => setActiveModal(modalName);
+  const closeModal = () => setActiveModal(null);
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-yellow-50 text-red-700">
       <div className="flex flex-col items-center gap-8 p-6">
-        <Header mode={mode} changeMode={changeMode} openCustomModal={openCustomModal} showCustomModal={showCustomModal} pendingCustom={pendingCustom} setPendingCustom={setPendingCustom} setCustom={setCustom} />
+        <Header mode={mode} changeMode={changeMode} activeModal={activeModal} openModal={openModal} closeModal={closeModal} pendingCustom={pendingCustom} setPendingCustom={setPendingCustom} setCustom={setCustom} setDuration={setDuration} />
         <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} running={running} custom={custom} timeUp={timeUp} />
-        <Timer secondsLeft={secondsLeft} running={running} hasStarted={hasStarted} timeUp={timeUp} toggle={toggle} reset={reset} focusTask={focusTask} setFocusTask={setFocusTask} handleNextOption={handleNextOption} options={options} timeUpRef={timeUpRef} />
+        <Timer secondsLeft={secondsLeft} running={running} hasStarted={hasStarted} timeUp={timeUp} toggle={toggle} reset={reset} focusTask={focusTask} setFocusTask={setFocusTask} handleNextOption={handleNextOption} options={options} />
         <ProgressBar progress={progress} running={running} />
       </div>
     </div>

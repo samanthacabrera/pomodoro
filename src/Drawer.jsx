@@ -140,7 +140,7 @@ export default function Drawer({ menuOpen, setMenuOpen, running}) {
   }, [tasks, history]);
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
+    const isMobile = window.innerWidth < 450;
     if (isMobile) {
       setCards(prev => prev.filter(c => c.id !== "shortcuts"));
     }

@@ -1,16 +1,34 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
+import Modal from "./Modal";
 
-export default function Timer({ secondsLeft, running, hasStarted, timeUp, toggle, reset, focusTask, setFocusTask, handleNextOption, options }) {
-  const timeUpRef = useRef(null);
+export default function Timer({
+  secondsLeft,
+  running,
+  hasStarted,
+  timeUp,
+  toggle,
+  reset,
+  focusTask,
+  setFocusTask,
+  handleNextOption,
+  options,
+}) {
+  const [showTimeUpModal, setShowTimeUpModal] = useState(false);
 
   const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
   const seconds = String(secondsLeft % 60).padStart(2, "0");
 
   useEffect(() => {
+    if (timeUp) setShowTimeUpModal(true);
+  }, [timeUp]);
+
+  const handleCloseModal = () => {
+    setShowTimeUpModal(false);
+  };
+
+  useEffect(() => {
     if (!hasStarted) {
       document.title = "Tomate";
-    } else if (!running) {
-      document.title = `${minutes}:${seconds}`;
     } else {
       document.title = `${minutes}:${seconds}`;
     }
@@ -31,8 +49,9 @@ export default function Timer({ secondsLeft, running, hasStarted, timeUp, toggle
           className="w-full text-center bg-yellow-50 border-b-2 border-dotted border-red-700 px-2 text-black/90 font-medium text-base placeholder-black/50 focus:outline-none hover:translate-y-0.5 transition-all duration-150 caret-red-700"
         />
       </div>
-      {/* Timer */}
-      <div className="relative w-96 h-96 md:w-[45vw] md:h-[55vh] flex items-center justify-center">
+
+      {/* Timer Display */}
+      <div className="relative w-96 h-96 md:w-[45vw] md:h-[55vh] flex items-center justify-center mt-6">
         <img
           src="/pomodoro/tomato.png"
           alt="tomato"
@@ -40,58 +59,44 @@ export default function Timer({ secondsLeft, running, hasStarted, timeUp, toggle
           draggable="false"
         />
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="mt-12 text-center">
-            <div className="text-4xl md:text-6xl font-medium text-white select-none">
-              {minutes}:{seconds}
-            </div>
+          <div className="text-4xl md:text-6xl font-medium text-white select-none mt-12">
+            {minutes}:{seconds}
           </div>
         </div>
       </div>
 
       {/* Controls */}
       <div className="flex gap-4 mt-6">
-        <button
-          onClick={toggle}
-          className="button-base button-inactive"
-        >
+        <button onClick={toggle} className="button-base button-inactive">
           {running ? "Pause" : "Start"}
         </button>
-        <button
-          onClick={reset}
-          className="button-base button-inactive"
-        >
+        <button onClick={reset} className="button-base button-inactive">
           Reset
         </button>
       </div>
 
-      {hasStarted && !running && (
-        <div
-          className="fixed inset-0 bg-black/20 pointer-events-none transition-opacity duration-300"
-        ></div>
-      )}
-  
-      {timeUp && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
-          <div
-            ref={timeUpRef}
-            className="bg-yellow-50 border-2 border-red-700 rounded-xl px-16 py-8 shadow-[4px_4px_0_rgba(0,0,0,1)] text-red-700 flex flex-col space-y-6 md:space-y-8 items-center"
-          >
-            <h3 className="text-lg font-semibold">Time's Up!</h3>
-            <p className="text-center">Choose your next session:</p>
-
-            <div className="flex gap-3">
-              {options.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => handleNextOption(opt.value)}
-                  className={`button-base button-active`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
+      {/* Time's Up Modal */}
+      <Modal isOpen={showTimeUpModal} onClose={handleCloseModal} title="Time's Up!">
+        <p className="text-center">Choose your next session:</p>
+        <div className="flex gap-3 mt-4">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => {
+                handleNextOption(opt.value);
+                handleCloseModal();
+              }}
+              className="button-base button-active"
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
+      </Modal>
+
+      {/* Overlay when paused */}
+      {hasStarted && !running && (
+        <div className="fixed inset-0 bg-black/20 pointer-events-none transition-opacity duration-300"></div>
       )}
     </div>
   );
