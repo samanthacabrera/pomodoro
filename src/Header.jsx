@@ -51,9 +51,9 @@ export default function Header({ mode, changeMode, activeModal, openModal, close
         <button onClick={() => changeMode("long")} className={`button-base ${mode === "long" ? "button-active" : "button-inactive"}`}>
             Long Break
         </button>
-        <button onClick={() => openModal("custom")} className={`button-base ${mode === "custom" ? "button-active" : "button-inactive"}`}>
+        {/* <button onClick={() => openModal("custom")} className={`button-base ${mode === "custom" ? "button-active" : "button-inactive"}`}>
             Custom Timer
-        </button>
+        </button> */}
 
         {/* Custom Timer Modal */}
         <Modal

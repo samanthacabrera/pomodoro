@@ -52,6 +52,9 @@ function TodoList({ tasks, setTasks, newTask, setNewTask }) {
 }
 
 function Tracker({ resetTracker, history }) {
+  const [confirmMode, setConfirmMode] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
 
@@ -61,24 +64,68 @@ function Tracker({ resetTracker, history }) {
 
   const allTimeMinutes = history.reduce((sum, h) => sum + h.minutes, 0);
 
+  const handleReset = () => {
+    if (confirmText.toLowerCase() === "reset") {
+      resetTracker();
+      setConfirmMode(false);
+      setConfirmText("");
+    }
+  };
+
   return (
     <div className="flex flex-col space-y-4">
       <div>
         <p className="font-bold">Today’s Total Time</p>
         <p>{todayMinutes} min</p>
       </div>
-
       <div>
         <p className="font-bold">All-Time Total Time</p>
         <p>{allTimeMinutes} min</p>
       </div>
+      {!confirmMode ? (
+        <button
+          onClick={() => setConfirmMode(true)}
+          className="border border-red-700 rounded p-1 w-fit hover:bg-red-700 hover:text-yellow-50 transition-all"
+        >
+          Reset Tracker
+        </button>
+      ) : (
+        <div className="flex flex-col space-y-2">
+          <p className="text-xs text-red-700">
+            Type <strong>reset</strong> to confirm.
+          </p>
+          <input
+            type="text"
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleReset()}
+            className="border border-red-300 rounded p-1 text-xs"
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={handleReset}
+              className={`border rounded p-1 text-xs hover:-translate-y-0.5 transition-all ${
+                confirmText.toLowerCase() === "reset"
+                  ? "border-red-700 bg-red-700 text-white"
+                  : "border-stone-300 text-stone-500 cursor-not-allowed"
+              }`}
+              disabled={confirmText.toLowerCase() !== "reset"}
+            >
+              Confirm
+            </button>
 
-      <button
-        onClick={resetTracker}
-        className="border border-red-700 rounded p-1 w-fit hover:bg-red-700 hover:text-yellow-50 transition-all"
-      >
-        Reset Tracker
-      </button>
+            <button
+              onClick={() => {
+                setConfirmMode(false);
+                setConfirmText("");
+              }}
+              className="border border-black rounded p-1 text-xs hover:-translate-y-0.5 transition-all"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
