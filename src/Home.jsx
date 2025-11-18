@@ -21,12 +21,14 @@ export default function Home() {
   const [running, setRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
-  const [focusTask, setFocusTask] = useState("");
   const [finishedMode, setFinishedMode] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [custom, setCustom] = useState(1);
   const [pendingCustom, setPendingCustom] = useState(custom);
   const [activeModal, setActiveModal] = useState(null); 
+  const [focusTask, setFocusTask] = useState(() => {
+    return localStorage.getItem("focusTask") || "";
+  });
 
   const startTimeRef = useRef(null);
   const menuRef = useRef(null);
@@ -145,12 +147,15 @@ export default function Home() {
     return () => document.removeEventListener("keydown", handleKey);
   }, [menuOpen, toggle, reset, changeMode]);
 
+  useEffect(() => {
+    localStorage.setItem("focusTask", focusTask);
+  }, [focusTask]);
+
   // Next option after timeUp
   const handleNextOption = (nextMode) => {
     changeMode(nextMode);
     setTimeUp(false);
   };
-
   let options = [];
   if (finishedMode === "pomodoro") options = [{ label: "Short Break", value: "short" }, { label: "Long Break", value: "long" }];
   else if (finishedMode === "short" || finishedMode === "long") options = [{ label: "Pomodoro", value: "pomodoro" }];
