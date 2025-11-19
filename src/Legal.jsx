@@ -9,25 +9,25 @@ export default function Legal() {
         <div className="max-w-2xl text-sm space-y-4">
             <p>
                 This app is a personal project based on a general time-management
-                method, which is not protected by copyright and may be freely implemented.
-                “Pomodoro®” is a trademark of Francesco Cirillo and is used only to reference the technique; 
-                this app is not affiliated with him.       
+                method. “Pomodoro®” is a trademark owned by Francesco Cirillo and is mentioned
+                here only to describe the technique; this app is not affiliated with him.  
+                The method itself is not copyrighted and can be freely used by anyone.    
             </p>
 
             <p>
-                This app stores your timer settings, session statistics, and to-do items directly 
+                This app saves your timer settings, session statistics, main focus, and to-do items directly 
                 on your device using your browser’s local storage. All information stays on your 
                 device and is never shared with third parties.
             </p>
 
             <p>
-                The app will always request your permission to send browser notifications for 
+                This app will request your permission to send browser notifications for 
                 timer alerts. You must grant this permission for alerts to appear outside the app. 
                 If you deny permission, all alerts will only appear inside the app itself.
             </p>
             
             <p>
-                Art assets, such as the tomato image used in this app, are provided by <a href="https://www.vecteezy.com/free-png/tomato" target="_blank" rel="noopener noreferrer" className="underline hover:text-stone-800">Vecteezy</a>.
+                The tomato image used in this app, is provided by <a href="https://www.vecteezy.com/free-png/tomato" target="_blank" rel="noopener noreferrer" className="underline hover:text-stone-800">Vecteezy</a>.
             </p>
 
             <p>

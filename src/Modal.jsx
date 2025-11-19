@@ -3,7 +3,6 @@ import { useRef, useEffect } from "react";
 export default function Modal({ isOpen, onClose, title, children }) {
   const modalRef = useRef(null);
 
-  // Close when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Header from "./Header";
 import Drawer from "./Drawer";
 import Timer from "./Timer";
+import Modal from "./Modal";
 import ProgressBar from "./Progress";
 
 export const POMODORO = 25 * 60;
@@ -23,8 +24,6 @@ export default function Home() {
   const [timeUp, setTimeUp] = useState(false);
   const [finishedMode, setFinishedMode] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [custom, setCustom] = useState(1);
-  const [pendingCustom, setPendingCustom] = useState(custom);
   const [activeModal, setActiveModal] = useState(null); 
   const [focusTask, setFocusTask] = useState(() => {
     return localStorage.getItem("focusTask") || "";
@@ -102,7 +101,7 @@ export default function Home() {
 
   const changeMode = useCallback(
     (newMode) => {
-      const newDuration = MODES[newMode] ?? custom * 60;
+      const newDuration = MODES[newMode];
       setMode(newMode);
       setDuration(newDuration);
       setSecondsLeft(newDuration);
@@ -111,7 +110,7 @@ export default function Home() {
       setTimeUp(false);
       startTimeRef.current = null;
     },
-    [custom]
+    []
   );
 
   useEffect(() => {
@@ -137,8 +136,7 @@ export default function Home() {
           changeMode("long");
           break;
         case "c":
-          changeMode("custom");
-          openModal("custom");
+          openModal("customTimer");
           break;
       }
     };
@@ -165,11 +163,60 @@ export default function Home() {
   const openModal = (modalName) => setActiveModal(modalName);
   const closeModal = () => setActiveModal(null);
 
+  //  Custom Timer Modal 
+  const CustomTimerModal = () => {
+    const [minutes, setMinutes] = useState("1");
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      let mins = Number(minutes);
+        if (isNaN(mins) || mins < 1) mins = 1;
+        if (mins > 60) mins = 60;
+      const secs = Math.max(1, minutes) * 60;
+      setDuration(secs);
+      setSecondsLeft(secs);
+      setMode("custom"); 
+      setRunning(false);
+      setHasStarted(false);
+      setTimeUp(false);
+      startTimeRef.current = null;
+      closeModal();
+    };
+
+    return (
+      <Modal
+        isOpen={activeModal === "customTimer"}
+        onClose={closeModal}
+        title="Custom Timer"
+      >
+        <form onSubmit={handleSubmit} className="flex flex-col items-center space-y-4">
+          <label className="text-sm font-medium">
+            Minutes:
+              <input
+                type="number"
+                min="1"
+                max="60"
+                step="1"
+                value={minutes}
+                onChange={(e) => setMinutes(e.target.value)}
+                className="no-spinner border border-red-700 rounded px-2 py-1 ml-2 w-20 text-center"
+              />
+          </label>
+
+          <button type="submit" className="button-base button-active w-full">
+            Set Timer
+          </button>
+        </form>
+      </Modal>
+    );
+  };
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-yellow-50 text-red-700">
       <div className="flex flex-col items-center gap-8 p-6">
-        <Header mode={mode} changeMode={changeMode} activeModal={activeModal} openModal={openModal} closeModal={closeModal} pendingCustom={pendingCustom} setPendingCustom={setPendingCustom} setCustom={setCustom} setDuration={setDuration} />
-        <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} running={running} custom={custom} timeUp={timeUp} />
+        <Header mode={mode} changeMode={changeMode} activeModal={activeModal} openModal={openModal} closeModal={closeModal} setDuration={setDuration} />
+        <CustomTimerModal />
+        <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} running={running} timeUp={timeUp} />
         <Timer secondsLeft={secondsLeft} running={running} hasStarted={hasStarted} timeUp={timeUp} toggle={toggle} reset={reset} focusTask={focusTask} setFocusTask={setFocusTask} handleNextOption={handleNextOption} options={options} />
         <ProgressBar progress={progress} running={running} />
       </div>
