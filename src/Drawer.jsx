@@ -222,7 +222,7 @@ export default function Drawer({ menuOpen, setMenuOpen, running}) {
 
   return (
     <>
-      <div className="fixed top-6 right-4">
+      <div className="absolute top-6 right-4">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="text-2xl md:text-4xl hover:scale-110 hover:text-red-600 transition-all duration-300"
@@ -254,7 +254,7 @@ export default function Drawer({ menuOpen, setMenuOpen, running}) {
               <div
                 key={card.id}
                 onClick={() => index !== 0 && cycleCards()}
-                className={`absolute w-full h-96 p-4 rounded-md border-2 border-dotted border-stone-700 bg-yellow-50 shadow-[4px_4px_0_0_#00000030] overflow-hidden transition-transform duration-300 
+                className={`absolute w-full h-96 p-4 rounded-md border border-stone-700/50 bg-yellow-50 shadow-[4px_4px_0_0_#00000030] overflow-hidden transition-transform duration-300 
                   ${index === 0 ? "cursor-default" : "cursor-pointer select-none"} 
                 `}
                 style={{

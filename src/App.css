@@ -6,10 +6,13 @@ body,
 html {
   padding: 0;
   margin: 0;
+  background-color: #fefce8;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 .button-base {
-  @apply flex items-center justify-center w-32 md:w-36 h-8 md:h-12 rounded-lg font-bold lowercase text-xs md:text-base border border-black transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none;
+  @apply flex items-center justify-center w-32 md:w-36 h-8 md:h-12 rounded-lg font-bold lowercase text-xs md:text-base border border-stone-700 transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none;
 }
 
 .button-active {

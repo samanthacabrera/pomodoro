@@ -212,7 +212,7 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-yellow-50 text-red-700">
+    <div className="h-screen w-screen overflow-hidden text-red-700">
       <div className="flex flex-col items-center gap-8 p-6">
         <Header mode={mode} changeMode={changeMode} activeModal={activeModal} openModal={openModal} closeModal={closeModal} setDuration={setDuration} />
         <CustomTimerModal />
