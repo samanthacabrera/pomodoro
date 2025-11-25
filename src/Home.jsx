@@ -86,9 +86,14 @@ export default function Home() {
 
   // Keyboard shortcuts
   const toggle = useCallback(() => {
-    if (!running) setHasStarted(true);
-    if (!startTimeRef.current) startTimeRef.current = Date.now() - (duration - secondsLeft) * 1000;
-    setRunning((r) => !r);
+    if (running) {
+      setRunning(false);
+      startTimeRef.current = null;
+      return;
+    }
+    setHasStarted(true);
+    startTimeRef.current = Date.now() - (duration - secondsLeft) * 1000;
+    setRunning(true);
   }, [running, duration, secondsLeft]);
 
   const reset = useCallback(() => {

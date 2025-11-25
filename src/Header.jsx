@@ -4,7 +4,7 @@ export default function Header({ mode, changeMode, menuOpen, setMenuOpen, openMo
   return (
     <div className="flex flex-col md:flex-row justify-between w-screen px-4">
       <div className="flex-col">
-        <h1 className="text-5xl md:text-6xl uppercase tracking-wide font-bold -mb-2">Tomate</h1>
+        <h1 className="text-5xl md:text-6xl lowercase tracking-wide font-bold ml-0 md:ml-2 -mb-2">Tomate</h1>
         <a
           href="https://www.pomodorotechnique.com/"
           target="_blank"

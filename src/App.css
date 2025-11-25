@@ -12,7 +12,7 @@ html {
 }
 
 .button-base {
-  @apply flex items-center justify-center w-32 md:w-36 h-8 md:h-12 rounded-lg font-bold lowercase text-xs md:text-base border border-stone-700 transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none;
+  @apply flex items-center justify-center w-32 md:w-36 h-8 md:h-12 rounded-lg font-bold lowercase text-xs md:text-base border border-red-800 transition-all duration-300 transform hover:scale-105 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.9)] focus:outline-none;
 }
 
 .button-active {
