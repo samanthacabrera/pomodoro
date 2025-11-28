@@ -35,7 +35,7 @@ export default function Timer({
   }, [secondsLeft, hasStarted, running]);
 
   return (
-    <div className="flex flex-col space-y-1 items-center">
+    <div className="flex flex-col items-center">
       {/* Focus */}
       <div className="w-full max-w-sm flex flex-col items-center gap-2">
         <label className="text-red-700 text-sm font-medium tracking-wide select-none text-center">
@@ -96,7 +96,7 @@ export default function Timer({
 
       {/* Overlay when paused */}
       {hasStarted && !running && (
-        <div className="fixed inset-0 bg-black/20 pointer-events-none transition-opacity duration-300"></div>
+        <div className="fixed inset-0 bg-black/20 pointer-events-none transition-opacity duration-300 z-50"></div>
       )}
     </div>
   );

@@ -65,7 +65,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!hasStarted) {
-      document.title = "Tomate";
+      document.title = "tomate";
     } else if (timeUp) {
       document.title = "Time's up!";
     } else {

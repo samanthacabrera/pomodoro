@@ -245,8 +245,8 @@ export default function Drawer({ menuOpen, setMenuOpen, running}) {
             ×
           </button>
 
-          <h2 className="text-2xl md:text-4xl text-yellow-50 uppercase tracking-wide font-bold border-b-2 border-yellow-50 border-dotted">
-            Dash<span className="md:block">board</span>
+          <h2 className="text-2xl text-yellow-50 uppercase tracking-wide font-bold border-b-2 border-yellow-50 border-dotted">
+            Dashboard
           </h2>
 
           <div className="relative flex flex-col items-center justify-center flex-1">
