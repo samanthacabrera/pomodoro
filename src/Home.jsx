@@ -31,25 +31,29 @@ export default function Home() {
 
   const startTimeRef = useRef(null);
   const menuRef = useRef(null);
+  const audioRef = useRef(null);
 
   const progress = secondsLeft / duration;
 
   useEffect(() => {
     if (!running) return;
-
     if (!startTimeRef.current) startTimeRef.current = Date.now() - (duration - secondsLeft) * 1000;
 
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
       const remaining = Math.max(duration - elapsed, 0);
       setSecondsLeft(remaining);
-
       if (remaining === 0) {
         setRunning(false);
         setTimeUp(true);
         setFinishedMode(mode);
         startTimeRef.current = null;
-
+        if (audioRef.current) {
+          setTimeout(() => {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play().catch(err => console.log("Audio play failed:", err));
+          }, 0);
+        }
         if (Notification.permission === "granted") {
           new Notification("Time's up!", {
             icon: "/pomodoro/tomato.png",
@@ -218,6 +222,7 @@ export default function Home() {
 
   return (
     <div className="h-screen w-screen overflow-hidden text-red-700">
+      <audio ref={audioRef} src="/pomodoro/kitchen-timer.mp3" preload="auto" />
       <div className="flex flex-col items-center gap-8 p-6">
         <Header mode={mode} changeMode={changeMode} activeModal={activeModal} openModal={openModal} closeModal={closeModal} setDuration={setDuration} />
         <CustomTimerModal />

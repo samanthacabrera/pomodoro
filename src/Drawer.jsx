@@ -293,7 +293,7 @@ export default function Drawer({ menuOpen, setMenuOpen, running}) {
               Legal & Privacy
             </Link>
             <span className="hidden xl:inline">|</span>
-            <a href="https://github.com/samanthacabrera" target="_blank" rel="noopener noreferrer"className="hover:text-yellow-50/70 transition">
+            <a href="https://samoontha.com/" target="_blank" rel="noopener noreferrer"className="hover:text-yellow-50/70 transition">
               Made by Sam Cabrera
             </a>
           </div>

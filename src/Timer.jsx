@@ -46,7 +46,7 @@ export default function Timer({
           value={focusTask}
           onChange={(e) => setFocusTask(e.target.value)}
           placeholder=""
-          className="w-full text-center bg-yellow-50 border-b-2 border-dotted border-red-700 px-2 text-black/90 font-medium text-base placeholder-black/50 focus:outline-none hover:translate-y-0.5 transition-all duration-150 caret-red-700"
+          className="w-full text-center bg-yellow-50 border-b-2 border-dotted border-red-700 px-2 text-black/80 font-medium text-base placeholder-black/50 focus:outline-none transition-all duration-150 caret-red-700"
         />
       </div>
 
@@ -59,7 +59,7 @@ export default function Timer({
           draggable="false"
         />
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-4xl md:text-6xl font-medium text-white select-none mt-12">
+          <div className="text-4xl md:text-6xl font-bold text-white select-none mt-12">
             {minutes}:{seconds}
           </div>
         </div>
