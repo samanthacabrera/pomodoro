@@ -234,7 +234,7 @@ export default function Home() {
       <div className="flex flex-col items-center gap-8 p-6">
         <Header mode={mode} changeMode={changeMode} activeModal={activeModal} openModal={openModal} closeModal={closeModal} setDuration={setDuration} />
         <CustomTimerModal />
-        <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} running={running} timeUp={timeUp} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} />
+        <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} running={running} timeUp={timeUp} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled}/>
         <Timer secondsLeft={secondsLeft} running={running} hasStarted={hasStarted} timeUp={timeUp} toggle={toggle} reset={reset} focusTask={focusTask} setFocusTask={setFocusTask} handleNextOption={handleNextOption} options={options} />
         <ProgressBar progress={progress} running={running} />
       </div>

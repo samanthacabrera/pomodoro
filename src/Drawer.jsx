@@ -133,21 +133,20 @@ function Tracker({ resetTracker, history }) {
 function Settings({ soundEnabled, setSoundEnabled }) {
   return (
     <div className="flex flex-col space-y-3 text-sm">
-
-    <div className="flex justify-between items-center">
-      <p>Enable Sound</p>
-      <input
-        type="checkbox"
-        className="accent-red-700"
-        checked={soundEnabled}
-        onChange={(e) => setSoundEnabled(e.target.checked)}
-      />
-    </div>
+      <div className="flex justify-between items-center">
+        <p>Enable Sound</p>
+        <input
+          type="checkbox"
+          className="accent-red-700"
+          checked={soundEnabled}
+          onChange={(e) => setSoundEnabled(e.target.checked)}
+        />
+      </div>
   </div>
   )
 }
 
-export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, setSoundEnabled}) {
+export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, setSoundEnabled }) {
   const [newTask, setNewTask] = useState("");
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem("tasks");
@@ -280,7 +279,7 @@ export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, 
                   ${index === 0 ? "cursor-default" : "cursor-pointer select-none"} 
                 `}
                 style={{
-                  top: `calc(50% - ${
+                  top: `calc(60% - ${
                     (cards.length * 100) / 2 + (cards.length - 1) * 20
                   }px + ${(cards.length - 1 - index) * 40}px)`,
                   left: "50%",
