@@ -130,7 +130,24 @@ function Tracker({ resetTracker, history }) {
   );
 }
 
-export default function Drawer({ menuOpen, setMenuOpen, running}) {
+function Settings({ soundEnabled, setSoundEnabled }) {
+  return (
+    <div className="flex flex-col space-y-3 text-sm">
+
+    <div className="flex justify-between items-center">
+      <p>Enable Sound</p>
+      <input
+        type="checkbox"
+        className="accent-red-700"
+        checked={soundEnabled}
+        onChange={(e) => setSoundEnabled(e.target.checked)}
+      />
+    </div>
+  </div>
+  )
+}
+
+export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, setSoundEnabled}) {
   const [newTask, setNewTask] = useState("");
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem("tasks");
@@ -176,6 +193,11 @@ export default function Drawer({ menuOpen, setMenuOpen, running}) {
           <li><strong>c</strong> - Custom Timer</li>
         </ul>
       ),
+    },
+    {
+      id: "settings",
+      title: "Settings",
+      content: null, 
     },
   ]);
 
@@ -276,6 +298,8 @@ export default function Drawer({ menuOpen, setMenuOpen, running}) {
                     <TodoList tasks={tasks} setTasks={setTasks} newTask={newTask} setNewTask={setNewTask} />
                   ) : card.id === "tracker" ? (
                     <Tracker history={history} resetTracker={resetTracker} />
+                  ) : card.id === "settings" ? (
+                    <Settings soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} />
                   ) : (
                     card.content
                   )}
