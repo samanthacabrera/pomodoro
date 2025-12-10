@@ -32,12 +32,45 @@ export default function Home() {
     const saved = localStorage.getItem("soundEnabled");
     return saved ? JSON.parse(saved) : true; 
   });
+  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
+    const saved = localStorage.getItem("notificationsEnabled");
+    return saved ? JSON.parse(saved) : true; 
+  });
+
+  const [notificationPermission, setNotificationPermission] = useState(
+    Notification.permission
+  );
 
   const startTimeRef = useRef(null);
   const menuRef = useRef(null);
   const audioRef = useRef(null);
 
   const progress = secondsLeft / duration;
+
+  const requestNotificationPermission = async () => {
+    try {
+      const result = await Notification.requestPermission();
+      setNotificationPermission(result);
+      if (result === "granted") {
+        setNotificationsEnabled(true);
+        localStorage.setItem("notificationsEnabled", true);
+      } else {
+        setNotificationsEnabled(false);
+        localStorage.setItem("notificationsEnabled", false);
+      }
+    } catch (err) {
+      console.error("Permission request failed:", err);
+    }
+  };
+
+  useEffect(() => {
+    const firstVisit = localStorage.getItem("askedNotificationPermission");
+
+    if (!firstVisit && notificationsEnabled) {
+      localStorage.setItem("askedNotificationPermission", "true");
+      requestNotificationPermission();
+    }
+  }, []);
 
   useEffect(() => {
     if (!running) return;
@@ -58,7 +91,7 @@ export default function Home() {
             audioRef.current.play().catch(err => console.log("Audio play failed:", err));
           }, 0);
         }
-        if (Notification.permission === "granted") {
+        if (notificationsEnabled && Notification.permission === "granted") {
           new Notification("Time's up!", {
             icon: "/pomodoro/tomato.png",
             body: "Take a break or start your next session.",
@@ -166,6 +199,10 @@ export default function Home() {
     localStorage.setItem("soundEnabled", JSON.stringify(soundEnabled));
   }, [soundEnabled]);
 
+  useEffect(() => {
+    localStorage.setItem("notificationsEnabled", JSON.stringify(notificationsEnabled));
+  }, [notificationsEnabled]);
+
   // Next option after timeUp
   const handleNextOption = (nextMode) => {
     changeMode(nextMode);
@@ -234,7 +271,7 @@ export default function Home() {
       <div className="flex flex-col items-center gap-8 p-6">
         <Header mode={mode} changeMode={changeMode} activeModal={activeModal} openModal={openModal} closeModal={closeModal} setDuration={setDuration} />
         <CustomTimerModal />
-        <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} running={running} timeUp={timeUp} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled}/>
+        <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} running={running} timeUp={timeUp} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} notificationsEnabled={notificationsEnabled} setNotificationsEnabled={setNotificationsEnabled} notificationPermission={notificationPermission} requestNotificationPermission={requestNotificationPermission}/>
         <Timer secondsLeft={secondsLeft} running={running} hasStarted={hasStarted} timeUp={timeUp} toggle={toggle} reset={reset} focusTask={focusTask} setFocusTask={setFocusTask} handleNextOption={handleNextOption} options={options} />
         <ProgressBar progress={progress} running={running} />
       </div>

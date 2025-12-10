@@ -130,7 +130,14 @@ function Tracker({ resetTracker, history }) {
   );
 }
 
-function Settings({ soundEnabled, setSoundEnabled }) {
+function Settings({
+  soundEnabled,
+  setSoundEnabled,
+  notificationsEnabled,
+  setNotificationsEnabled,
+  notificationPermission,
+  requestNotificationPermission
+}) {
   return (
     <div className="flex flex-col space-y-3 text-sm">
       <div className="flex justify-between items-center">
@@ -142,11 +149,32 @@ function Settings({ soundEnabled, setSoundEnabled }) {
           onChange={(e) => setSoundEnabled(e.target.checked)}
         />
       </div>
-  </div>
-  )
+      <div className="flex justify-between items-center">
+        <p>Enable Notifications</p>
+        <input
+          type="checkbox"
+          className="accent-red-700"
+          checked={notificationsEnabled}
+          onChange={() => {
+            if (notificationPermission === "granted") {
+              setNotificationsEnabled(!notificationsEnabled);
+            } else {
+              requestNotificationPermission();
+            }
+          }}
+        />
+      </div>
+
+      {notificationPermission === "denied" && (
+        <p className="text-xs text-red-600">
+          Notifications are blocked in browser settings.
+        </p>
+      )}
+    </div>
+  );
 }
 
-export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, setSoundEnabled }) {
+export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, setSoundEnabled, notificationsEnabled, setNotificationsEnabled, notificationPermission, requestNotificationPermission}) {
   const [newTask, setNewTask] = useState("");
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem("tasks");
@@ -298,7 +326,7 @@ export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, 
                   ) : card.id === "tracker" ? (
                     <Tracker history={history} resetTracker={resetTracker} />
                   ) : card.id === "settings" ? (
-                    <Settings soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} />
+                    <Settings soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} notificationsEnabled={notificationsEnabled} setNotificationsEnabled={setNotificationsEnabled} notificationPermission={notificationPermission} requestNotificationPermission={requestNotificationPermission} />
                   ) : (
                     card.content
                   )}
