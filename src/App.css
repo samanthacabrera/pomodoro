@@ -36,9 +36,8 @@ html {
 }
 
 /* Dark Mode  */
-
 body.dark {
-  background-color: #1d1a1a;
+  background-color: #1d1c1c;
   background-image: radial-gradient(
     rgba(255, 255, 255, 0.1) 1px,
     transparent 1px
@@ -50,7 +49,19 @@ body.dark .focus-task-label {
 }
 
 body.dark .focus-task-input {
-  background: #1d1a1a !important;
+  background: #1d1c1c !important;
   color: #cccaca !important;
   border-color: #555 !important;
+}
+
+body.dark .button-base {
+  @apply border-none;
+}
+
+body.dark .button-active {
+  @apply bg-stone-50 text-red-700;
+}
+
+body.dark .button-inactive {
+  @apply bg-red-700 text-stone-50;
 }

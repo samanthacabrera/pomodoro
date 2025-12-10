@@ -40,7 +40,8 @@ export default function Home() {
     Notification.permission
   );
   const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem("darkMode") === "false";
+    const saved = localStorage.getItem("darkMode");
+    return saved ? JSON.parse(saved) : false; 
   });
 
   const startTimeRef = useRef(null);
