@@ -38,7 +38,7 @@ export default function Timer({
     <div className="flex flex-col items-center">
       {/* Focus */}
       <div className="w-full max-w-sm flex flex-col items-center gap-2">
-        <label className="text-red-700 text-sm font-medium tracking-wide select-none text-center">
+        <label className="focus-task-label text-red-700 text-sm font-medium tracking-wide select-none text-center">
           I want to focus on...
         </label>
         <input
@@ -46,7 +46,7 @@ export default function Timer({
           value={focusTask}
           onChange={(e) => setFocusTask(e.target.value)}
           placeholder=""
-          className="w-full text-center bg-yellow-50 border-b-2 border-dotted border-red-700 px-2 text-black/80 font-medium text-base placeholder-black/50 focus:outline-none transition-all duration-150 caret-red-700"
+          className="focus-task-input w-full text-center bg-yellow-50 border-b-2 border-dotted border-red-700 px-2 text-black/80 font-medium text-base placeholder-black/50 focus:outline-none transition-all duration-150 caret-red-700"
         />
       </div>
 

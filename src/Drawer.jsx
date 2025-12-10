@@ -130,14 +130,7 @@ function Tracker({ resetTracker, history }) {
   );
 }
 
-function Settings({
-  soundEnabled,
-  setSoundEnabled,
-  notificationsEnabled,
-  setNotificationsEnabled,
-  notificationPermission,
-  requestNotificationPermission
-}) {
+function Settings({ soundEnabled, setSoundEnabled, notificationsEnabled, setNotificationsEnabled, notificationPermission, requestNotificationPermission, darkMode, setDarkMode }) {
   return (
     <div className="flex flex-col space-y-3 text-sm">
       <div className="flex justify-between items-center">
@@ -164,17 +157,25 @@ function Settings({
           }}
         />
       </div>
-
       {notificationPermission === "denied" && (
         <p className="text-xs text-red-600">
           Notifications are blocked in browser settings.
         </p>
       )}
+      <div className="flex justify-between items-center">
+        <p>Enable Dark Mode</p>
+        <input
+          type="checkbox"
+          className="accent-red-700"
+          checked={darkMode}
+          onChange={(e) => setDarkMode(e.target.checked)}
+        />
+      </div>
     </div>
   );
 }
 
-export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, setSoundEnabled, notificationsEnabled, setNotificationsEnabled, notificationPermission, requestNotificationPermission}) {
+export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, setSoundEnabled, notificationsEnabled, setNotificationsEnabled, notificationPermission, requestNotificationPermission, darkMode, setDarkMode}) {
   const [newTask, setNewTask] = useState("");
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem("tasks");
@@ -294,7 +295,7 @@ export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, 
             ×
           </button>
 
-          <h2 className="text-2xl text-yellow-50 uppercase tracking-wide font-bold border-b-2 border-yellow-50 border-dotted">
+          <h2 className="text-2xl text-yellow-50 tracking-wide font-bold border-b-2 border-yellow-50 border-dotted">
             Dashboard
           </h2>
 
@@ -326,7 +327,7 @@ export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, 
                   ) : card.id === "tracker" ? (
                     <Tracker history={history} resetTracker={resetTracker} />
                   ) : card.id === "settings" ? (
-                    <Settings soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} notificationsEnabled={notificationsEnabled} setNotificationsEnabled={setNotificationsEnabled} notificationPermission={notificationPermission} requestNotificationPermission={requestNotificationPermission} />
+                    <Settings soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} notificationsEnabled={notificationsEnabled} setNotificationsEnabled={setNotificationsEnabled} notificationPermission={notificationPermission} requestNotificationPermission={requestNotificationPermission} darkMode={darkMode} setDarkMode={setDarkMode} />
                   ) : (
                     card.content
                   )}

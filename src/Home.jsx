@@ -36,10 +36,12 @@ export default function Home() {
     const saved = localStorage.getItem("notificationsEnabled");
     return saved ? JSON.parse(saved) : true; 
   });
-
   const [notificationPermission, setNotificationPermission] = useState(
     Notification.permission
   );
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("darkMode") === "false";
+  });
 
   const startTimeRef = useRef(null);
   const menuRef = useRef(null);
@@ -203,6 +205,15 @@ export default function Home() {
     localStorage.setItem("notificationsEnabled", JSON.stringify(notificationsEnabled));
   }, [notificationsEnabled]);
 
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+    localStorage.setItem("darkMode", darkMode);
+  }, [darkMode]);
+
   // Next option after timeUp
   const handleNextOption = (nextMode) => {
     changeMode(nextMode);
@@ -271,7 +282,7 @@ export default function Home() {
       <div className="flex flex-col items-center gap-8 p-6">
         <Header mode={mode} changeMode={changeMode} activeModal={activeModal} openModal={openModal} closeModal={closeModal} setDuration={setDuration} />
         <CustomTimerModal />
-        <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} running={running} timeUp={timeUp} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} notificationsEnabled={notificationsEnabled} setNotificationsEnabled={setNotificationsEnabled} notificationPermission={notificationPermission} requestNotificationPermission={requestNotificationPermission}/>
+        <Drawer menuOpen={menuOpen} setMenuOpen={setMenuOpen} running={running} timeUp={timeUp} soundEnabled={soundEnabled} setSoundEnabled={setSoundEnabled} notificationsEnabled={notificationsEnabled} setNotificationsEnabled={setNotificationsEnabled} notificationPermission={notificationPermission} requestNotificationPermission={requestNotificationPermission} darkMode={darkMode} setDarkMode={setDarkMode}/>
         <Timer secondsLeft={secondsLeft} running={running} hasStarted={hasStarted} timeUp={timeUp} toggle={toggle} reset={reset} focusTask={focusTask} setFocusTask={setFocusTask} handleNextOption={handleNextOption} options={options} />
         <ProgressBar progress={progress} running={running} />
       </div>

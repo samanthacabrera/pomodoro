@@ -34,3 +34,23 @@ html {
 .no-spinner {
   -moz-appearance: textfield;
 }
+
+/* Dark Mode  */
+
+body.dark {
+  background-color: #1d1a1a;
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.1) 1px,
+    transparent 1px
+  );
+}
+
+body.dark .focus-task-label {
+  color: #cccaca !important;
+}
+
+body.dark .focus-task-input {
+  background: #1d1a1a !important;
+  color: #cccaca !important;
+  border-color: #555 !important;
+}
