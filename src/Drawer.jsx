@@ -275,7 +275,7 @@ export default function Drawer({ menuOpen, setMenuOpen, running,  soundEnabled, 
       <div className="absolute top-6 right-4">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="text-2xl md:text-4xl hover:scale-110 hover:text-red-600 transition-all duration-300"
+          className="menu-icon text-2xl md:text-4xl hover:scale-110 hover:text-red-600 transition-all duration-300"
         >
           ☰
         </button>

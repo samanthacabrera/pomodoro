@@ -44,6 +44,14 @@ body.dark {
   );
 }
 
+body.dark .title {
+  @apply text-red-800;
+}
+
+body.dark .menu-icon {
+  @apply text-red-800;
+}
+
 body.dark .focus-task-label {
   color: #cccaca !important;
 }
@@ -54,14 +62,18 @@ body.dark .focus-task-input {
   border-color: #555 !important;
 }
 
+body.dark .tomato-img {
+  opacity: 90%;
+}
+
 body.dark .button-base {
   @apply border-none;
 }
 
 body.dark .button-active {
-  @apply bg-stone-50 text-red-700;
+  @apply bg-stone-200 text-red-800;
 }
 
 body.dark .button-inactive {
-  @apply bg-red-700 text-stone-50;
+  @apply bg-red-800 text-stone-100;
 }

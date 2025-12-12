@@ -55,7 +55,7 @@ export default function Timer({
         <img
           src="/pomodoro/tomato.png"
           alt="tomato"
-          className="absolute inset-0 w-full h-full object-contain"
+          className="tomato-img absolute inset-0 w-full h-full object-contain"
           draggable="false"
         />
         <div className="absolute inset-0 flex items-center justify-center">
